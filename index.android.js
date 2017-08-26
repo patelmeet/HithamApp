@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 import './src/global';
-import './src/components/MainComponent';
+import MainComponent from './src/components/MainComponent';
 
 export default class Hitham extends Component {
   render() {
