@@ -24,7 +24,7 @@ export default class LoginForm extends Component {
           errors: [],
           isDownloaded: false,
           isplaying: false,
-          cururl: "/data/user/0/com.hitham/files/RNFetchBlobTmp_k22oice8x3dqhcv556kzj8",
+          cururl: "https://raw.githubusercontent.com/zmxv/react-native-sound-demo/master/advertising.mp3",
       }
 
       whoosh = new Sound(this.state.cururl , Sound.MAIN_BUNDLE, (error) => {

@@ -7,11 +7,12 @@ import {
 } from 'react-native';
 
 import Login from './Login/Login';
+import SongList from './SongList/SongList';
 
 export default class MainComponent extends Component {
   render() {
     return (
-      <Login />
+      <SongList />
     );
   }
 }
