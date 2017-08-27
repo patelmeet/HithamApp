@@ -1,5 +1,5 @@
 global.childID = 1;
-global.serviceURL = "http://192.168.43.21:8080/";
+global.serviceURL = "http://172.16.82.211:3000/";
 global.driveFileId = "0B_-MwrFrWjn-TmpRSXpkeHJ0Szg";
 global.driveViewURL = "https://drive.google.com/file/d/";
 global.driveDownloadURL = "https://drive.google.com/uc?export=download&id=";
