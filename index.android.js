@@ -1,20 +1,15 @@
 import React, { Component } from 'react';
 import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
+  AppRegistry
 } from 'react-native';
 
+import {StackNavigator} from 'react-navigation';
 import './src/global';
-import MainComponent from './src/components/MainComponent';
+import Login from './src/components/Login/Login';
+import SongList from './src/components/SongList/SongList';
 
-export default class Hitham extends Component {
-  render() {
-    return (
-      <MainComponent />
-    );
-  }
-}
-
+const Hitham = StackNavigator({
+  Login : { screen : Login},
+  SongList : { screen : SongList},
+});
 AppRegistry.registerComponent('Hitham', () => Hitham);
