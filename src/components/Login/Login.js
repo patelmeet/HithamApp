@@ -8,19 +8,32 @@ import {
   KeyboardAvoidingView
 } from 'react-native';
 
-import LoginForm from './LoginForm';
+import LoginPage from './LoginPage';
 
 export default class Login extends Component {
-  render() {
-    return (
-      <KeyboardAvoidingView behavior='padding' style={styles.container}>
-          <View style={styles.logocontainer}>
-              <Image style={styles.logo} source={require('../../images/hithamlogo.png')} />
-          </View>
-          <View style={styles.loginformcontainer}>
-              <LoginForm />
-          </View>
-      </KeyboardAvoidingView>
+    constructor(props){
+        super(props);
+        this.state = {
+            username : '',
+            password : '',
+        };
+        this.doLogin = this.doLogin.bind(this);
+    };  
+    doLogin = (u,p) =>{
+        const { navigate } = this.props.navigation;
+        navigate('Demo',{ username : u,password : p});
+    };
+
+    render() {
+        return (
+        <KeyboardAvoidingView behavior='padding' style={styles.container}>
+            <View style={styles.logocontainer}>
+            <Image style={styles.logo} source={require('../../images/hithamlogo.png')} />
+            </View>
+            <View style={styles.loginformcontainer}>
+                <LoginPage doooLogin={this.doLogin}/>
+            </View>
+        </KeyboardAvoidingView>
     );
   }
 }

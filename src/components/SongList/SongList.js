@@ -8,7 +8,8 @@ import {
     ListView, 
     Button,
     TouchableHighlight, 
-    AsyncStorage
+    AsyncStorage,
+    NetInfo
  } from 'react-native'
 
 import Sound from 'react-native-sound'
@@ -30,7 +31,41 @@ export default class SongList extends Component {
     }
 
     componentDidMount(){
-        this.fetchSongsOnline();
+        this.showSongs();
+    }
+
+    showSongs(){
+        NetInfo.isConnected.fetch().then((isConnected) => {
+            if(isConnected){
+                this.fetchSongsOnline();
+            }
+            else{
+                this.showSongsOffline();
+            }
+        });
+    }
+
+    showSongsOffline(){
+        console.log("----getting offline");
+        var alllist = [];
+        AsyncStorage.getAllKeys((err, keys) => {
+            console.log("---"+keys.length);
+            AsyncStorage.multiGet(keys, (err, stores) => {
+             stores.map((result, i, store) => {
+               let key = store[i][0];
+               let value = store[i][1];
+               alllist.push(JSON.parse(value));
+              });
+//              console.log("-----"+alllist);
+              this.setStateforSong(alllist);
+            });
+          });
+    }
+
+    setStateforSong(alllist){
+        this.setState({
+            userSongSource: this.state.userSongSource.cloneWithRows(alllist)
+        });
     }
 
     fetchSongsOnline(){
@@ -44,8 +79,7 @@ export default class SongList extends Component {
                     return;
                 var curres;
                 for(let i=0 ; i<response.length ; i++){
-                    var songid = ''+response[i].songlist_id;
-                    AsyncStorage.getItem(songid).then((item) => {
+                    AsyncStorage.getItem(''+response[i].songlist_id , (err,item) => {
                         if(item){
                             //Already added
                             console.log('-----------if');
@@ -53,42 +87,49 @@ export default class SongList extends Component {
                         }
                         else{
                             //Add
+                            var songid = ''+response[i].songlist_id;
                             console.log('-----------else');
                             curres = response[i];
                             curres['downloaded'] = false;
                             curres['downloadLoc'] = '';
-                            AsyncStorage.setItem(songid,JSON.stringify(curres));
+                            AsyncStorage.setItem(songid,JSON.stringify(curres), (err) => {
+                                if(err){
+                                    console.log("---error"+err.message);
+                                }
+                                else{
+                                    console.log("---Inserted Successfullly + "+ songid);
+                                }
+                            });
                             alllist.push(curres);
                         }
                         if( i == response.length-1){
-                            this.setState({
-                                userSongSource: this.state.userSongSource.cloneWithRows(alllist)
-                            });
+                            this.setStateforSong(alllist);
                         }
-                    })
-                    
+                    });
                 }
             });
     }
 
     playsong(song){
         if(song['downloaded'] == true){
-            console.log('----inside true');
+            
             whoosh = new Sound(song.downloadLoc , Sound.MAIN_BUNDLE, (error) => {
                 if(error){
                     console.log('failed to load');return;
                 }
+                console.log("----Playing");
                 this.setState({cururl : song.songlist_url , playingsongID : song.songlist_id ,isplaying : true});
                 whoosh.play( (success) => {
                     if(success){
                         this.setState({isplaying: false});
                     }
+                    
                 })
             })
         }
         else{
             //Download and then play
-            console.log('----inside else')
+            console.log('----Downloading')
             RNFetchBlob.config({fileCache : true})
                 .fetch('GET',song.songlist_url,{})
                 .then((res) => {
@@ -96,6 +137,7 @@ export default class SongList extends Component {
                     song['downloaded']=true;
                     song['downloadLoc']=res.path();
                     AsyncStorage.setItem(''+song.songlist_id,JSON.stringify(song));
+                    console.log("----Playing");
                     whoosh = new Sound(res.path() , Sound.MAIN_BUNDLE, (error) => {
                         if(error){
                             console.log('failed to load');return;
@@ -105,6 +147,7 @@ export default class SongList extends Component {
                             if(success){
                                 this.setState({isplaying: false});
                             }
+                            
                         })
                     })
                 })
@@ -118,7 +161,7 @@ export default class SongList extends Component {
             if(this.state.playingsongID == song.songlist_id)
                 return;
             else
-                whoosh.stop(() => {
+                whoosh.pause(() => {
                     this.playsong(song);
                 });
         }
