@@ -21,7 +21,11 @@ export default class Login extends Component {
     };  
     doLogin = (u,p) =>{
         const { navigate } = this.props.navigation;
+<<<<<<< HEAD
         navigate('Demo',{ username : u,password : p});
+=======
+        navigate('SongList',{ username : u,password : p});
+>>>>>>> 89a35318c2ad8c1de7cd1302a50f6ad2118f8599
     };
 
     render() {
@@ -31,7 +35,11 @@ export default class Login extends Component {
             <Image style={styles.logo} source={require('../../images/hithamlogo.png')} />
             </View>
             <View style={styles.loginformcontainer}>
+<<<<<<< HEAD
                 <LoginPage doooLogin={this.doLogin}/>
+=======
+                <LoginPage doLogin={this.doLogin}/>
+>>>>>>> 89a35318c2ad8c1de7cd1302a50f6ad2118f8599
             </View>
         </KeyboardAvoidingView>
     );
