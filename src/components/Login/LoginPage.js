@@ -23,11 +23,7 @@ export default class LoginPage extends React.Component {
     };
 
     handleLogin() {
-<<<<<<< HEAD
-        this.props.doooLogin(this.state.username,this.state.password);
-=======
         this.props.doLogin(this.state.username,this.state.password);
->>>>>>> 89a35318c2ad8c1de7cd1302a50f6ad2118f8599
     }
 
     render() {

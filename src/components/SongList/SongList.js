@@ -12,10 +12,8 @@ import {
     NetInfo
  } from 'react-native'
 
-import Sound from 'react-native-sound'
-import RNFetchBlob from 'react-native-fetch-blob'
-
-var whoosh;
+import RNFetchBlob from 'react-native-fetch-blob';
+import MusicPlayer from 'Hitham/src/class/MusicPlayer';
 
 export default class SongList extends Component {
 
@@ -60,6 +58,7 @@ export default class SongList extends Component {
               this.setStateforSong(alllist);
             });
           });
+       return "offline";   
     }
 
     setStateforSong(alllist){
@@ -69,14 +68,17 @@ export default class SongList extends Component {
     }
 
     fetchSongsOnline(){
-        console.log('----fetchSongsOnline called')
+        console.log('----fetchSongsOnline called');
+        console.log(serviceURL+'songs');
         fetch(serviceURL+'songs')
             .then((response) => response.json())
             .then((response) => {
-//                console.log("----service call finished");
+                console.log(response);
+                console.log("----service call finished");
                 var alllist = [];
-                if(response.length == 0)
+                if(response.length == 0){
                     return;
+                }
                 var curres;
                 for(let i=0 ; i<response.length ; i++){
                     AsyncStorage.getItem(''+response[i].songlist_id , (err,item) => {
@@ -112,20 +114,7 @@ export default class SongList extends Component {
 
     playsong(song){
         if(song['downloaded'] == true){
-            
-            whoosh = new Sound(song.downloadLoc , Sound.MAIN_BUNDLE, (error) => {
-                if(error){
-                    console.log('failed to load');return;
-                }
-                console.log("----Playing");
-                this.setState({cururl : song.songlist_url , playingsongID : song.songlist_id ,isplaying : true});
-                whoosh.play( (success) => {
-                    if(success){
-                        this.setState({isplaying: false});
-                    }
-                    
-                })
-            })
+            MusicPlayer.playNew(song.downloadLoc);
         }
         else{
             //Download and then play
@@ -138,20 +127,10 @@ export default class SongList extends Component {
                     song['downloadLoc']=res.path();
                     AsyncStorage.setItem(''+song.songlist_id,JSON.stringify(song));
                     console.log("----Playing");
-                    whoosh = new Sound(res.path() , Sound.MAIN_BUNDLE, (error) => {
-                        if(error){
-                            console.log('failed to load');return;
-                        }
-                        this.setState({cururl : song.songlist_url , playingsongID : song.songlist_id ,isplaying : true});
-                        whoosh.play( (success) => {
-                            if(success){
-                                this.setState({isplaying: false});
-                            }
-                            
-                        })
-                    })
+                    MusicPlayer.playNew(res.path());
                 })
         }
+        this.setState({cururl : song.songlist_url , playingsongID : song.songlist_id ,isplaying : true});
     }
 
     onSongPress(song){
@@ -160,10 +139,10 @@ export default class SongList extends Component {
         if(this.state.isplaying == true){
             if(this.state.playingsongID == song.songlist_id)
                 return;
-            else
-                whoosh.pause(() => {
-                    this.playsong(song);
-                });
+            else{
+                MusicPlayer.stop();
+                this.playsong(song);
+            }
         }
         else{
             this.playsong(song);
@@ -172,17 +151,7 @@ export default class SongList extends Component {
 
     onPressPlayPauseButton(){
         console.log('----onPressPlayPauseButton pressed');
-        if(this.state.isplaying == true){
-            whoosh.pause();
-            this.setState({isplaying : false});
-        }
-        else{
-            if(this.state.playingsongID == 0)
-                return;
-            this.setState({isplaying : true});
-            if(whoosh.isLoaded() == true)
-            whoosh.play( (success) => { if(success){ this.setState({isplaying: false}) }} );
-        }
+        MusicPlayer.toggle();
     }
 
     renderRow(song, sectionId, rowId, highlightRow){
