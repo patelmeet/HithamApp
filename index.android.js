@@ -4,11 +4,12 @@ import {
 } from 'react-native';
 import {StackNavigator} from 'react-navigation';
 import './src/global';
-import Login from './src/components/Login/Login';
-import SongList from './src/components/SongList/SongList';
-
+import LoginScreen from './src/screens/LoginScreen';
+import SongListScreen from './src/screens//SongListScreen';
+import PlayListScreen from './src/screens/PlayListScreen';
 const Hitham = StackNavigator({
-  Login : { screen : Login},
-  SongList : { screen : SongList},
+  Login : { screen : LoginScreen},
+  SongList : { screen : SongListScreen},
+  PlayList : {screen : PlayListScreen},
 });
 AppRegistry.registerComponent('Hitham', () => Hitham);

@@ -12,7 +12,7 @@ export default class MusicPlayer{
         // loaded successfully
         console.log('duration in seconds: ' + MusicPlayer.player.getDuration() 
           + 'number of channels: ' + MusicPlayer.player.getNumberOfChannels());
-          MusicPlayer.isPlaying = true; 
+        MusicPlayer.isPlaying = true; 
         MusicPlayer.player.play( (success) => {
             if(success){
                 MusicPlayer.isPlaying=false;
@@ -39,7 +39,6 @@ export default class MusicPlayer{
     }
 
     static playNew(location){
-        //this.location = location;
         MusicPlayer.player = new Sound(location,Sound.MAIN_BUNDLE,MusicPlayer.error_fn);
     }
 } 

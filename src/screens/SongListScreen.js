@@ -13,9 +13,9 @@ import {
  } from 'react-native'
 
 import RNFetchBlob from 'react-native-fetch-blob';
-import MusicPlayer from 'Hitham/src/class/MusicPlayer';
+import MusicPlayer from '../utils/MusicPlayer';
 
-export default class SongList extends Component {
+export default class SongListScreen extends Component {
 
     constructor() {
         super();
@@ -32,85 +32,28 @@ export default class SongList extends Component {
         this.showSongs();
     }
 
-    showSongs(){
-        NetInfo.isConnected.fetch().then((isConnected) => {
-            if(isConnected){
-                this.fetchSongsOnline();
-            }
-            else{
-                this.showSongsOffline();
-            }
-        });
-    }
-
-    showSongsOffline(){
-        console.log("----getting offline");
-        var alllist = [];
-        AsyncStorage.getAllKeys((err, keys) => {
-            console.log("---"+keys.length);
-            AsyncStorage.multiGet(keys, (err, stores) => {
-             stores.map((result, i, store) => {
-               let key = store[i][0];
-               let value = store[i][1];
-               alllist.push(JSON.parse(value));
-              });
-//              console.log("-----"+alllist);
-              this.setStateforSong(alllist);
-            });
-          });
-       return "offline";   
-    }
-
     setStateforSong(alllist){
         this.setState({
             userSongSource: this.state.userSongSource.cloneWithRows(alllist)
         });
     }
 
-    fetchSongsOnline(){
-        console.log('----fetchSongsOnline called');
-        console.log(serviceURL+'songs');
-        fetch(serviceURL+'songs')
-            .then((response) => response.json())
-            .then((response) => {
-                console.log(response);
-                console.log("----service call finished");
-                var alllist = [];
-                if(response.length == 0){
-                    return;
-                }
-                var curres;
-                for(let i=0 ; i<response.length ; i++){
-                    AsyncStorage.getItem(''+response[i].songlist_id , (err,item) => {
-                        if(item){
-                            //Already added
-                            console.log('-----------if');
-                            alllist.push(JSON.parse(item));
-                        }
-                        else{
-                            //Add
-                            var songid = ''+response[i].songlist_id;
-                            console.log('-----------else');
-                            curres = response[i];
-                            curres['downloaded'] = false;
-                            curres['downloadLoc'] = '';
-                            AsyncStorage.setItem(songid,JSON.stringify(curres), (err) => {
-                                if(err){
-                                    console.log("---error"+err.message);
-                                }
-                                else{
-                                    console.log("---Inserted Successfullly + "+ songid);
-                                }
-                            });
-                            alllist.push(curres);
-                        }
-                        if( i == response.length-1){
-                            this.setStateforSong(alllist);
-                        }
-                    });
-                }
-            });
-    }
+    async showSongs(){
+        try{
+        const { params } = this.props.navigation.state;    
+        await console.log("----loading songs "+JSON.stringify(params.response));
+        alllist=[];
+        for(index in params.response){
+            let item = await AsyncStorage.getItem(''+params.response[index]);
+            await console.log('key is '+index+' item is '+item);
+            await alllist.push(JSON.parse(item));
+        }
+        await this.setStateforSong(alllist);
+        await console.log('songs in the playlist: '+JSON.stringify(alllist));
+        }catch(error){
+            console.log(error);
+        }
+    } 
 
     playsong(song){
         if(song['downloaded'] == true){
@@ -139,14 +82,10 @@ export default class SongList extends Component {
         if(this.state.isplaying == true){
             if(this.state.playingsongID == song.songlist_id)
                 return;
-            else{
+            else
                 MusicPlayer.stop();
-                this.playsong(song);
-            }
         }
-        else{
-            this.playsong(song);
-        }
+        this.playsong(song);
     }
 
     onPressPlayPauseButton(){

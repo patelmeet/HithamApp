@@ -9,7 +9,7 @@ import {
   Image,
 } from 'react-native';
 
-export default class LoginPage extends React.Component {
+export default class LoginComponent extends React.Component {
     static navigationOptions = {
       title: 'Login',
     };
