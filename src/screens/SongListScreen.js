@@ -7,9 +7,10 @@ import {
     FlatList
  } from 'react-native'
 
-import RNFetchBlob from 'react-native-fetch-blob';
 import MusicPlayer from '../utils/MusicPlayer';
+import FileStore from '../utils/FileStore';
 import SongListItem from '../components/SongListItem';
+import PlayerComponent from '../components/PlayerComponent';
 
 export default class SongListScreen extends Component {
     static navigationOptions = {
@@ -19,15 +20,21 @@ export default class SongListScreen extends Component {
         super(props);
         this.state = {
             songs:[],
-            isplaying: false,
-            playingsongID:0,
-            cururl: ""
+            song:'',
         };
+        this.updateSong = this.updateSong.bind(this);
+    }
+
+
+    updateSong(song){
+        this.setState({song:song});
     }
       
     componentDidMount(){
         const { params } = this.props.navigation.state;    
         this.loadSongs(params.response);
+        if(MusicPlayer.isPlaying)
+            this.updateSong(MusicPlayer.song);
     }
 
     _keyExtractor = (item,index) => index;
@@ -40,37 +47,27 @@ export default class SongListScreen extends Component {
         />
     );
 
-    playsong(song){
-        if(song['downloaded'] == true){
-            MusicPlayer.playNew(song.downloadLoc);
-        }
-        else{
+    async playsong(song){
+        if(song['downloaded'] != true){
             //Download and then play
-            console.log('----Downloading')
-            RNFetchBlob.config({fileCache : true})
-                .fetch('GET',song.songlist_url,{})
-                .then((res) => {
-                    console.log('----download successful');
-                    song['downloaded']=true;
-                    song['downloadLoc']=res.path();
-                    AsyncStorage.setItem(''+song.songlist_id,JSON.stringify(song));
-                    console.log("----Playing");
-                    MusicPlayer.playNew(res.path());
-                })
+            let updatedSong = await FileStore.downloadSong(song);
+            await console.log('----Downloading')
+            await AsyncStorage.setItem(''+song.songlist_id,JSON.stringify(updatedSong));
         }
-        this.setState({cururl : song.songlist_url , playingsongID : song.songlist_id ,isplaying : true});
+        await MusicPlayer.playNew(song,this.updateSong);
+        return true;
     }
 
     _onPressItem = (song) => {
         console.log('----onSongPress pressed && isplaying = '+this.state.isplaying);
         console.log('song data: '+JSON.stringify(song));
-        if(this.state.isplaying == true){
-            if(this.state.playingsongID == song.songlist_id)
+        if(MusicPlayer.isplaying == true){
+            if(MusicPlayer.song.playingsongID == song.songlist_id)
                 return;
             else
                 MusicPlayer.stop();
         }
-        this.playsong(song);
+        this.playsong(song,this.updateSong);
     };
 
     async loadSongs(list){
@@ -87,13 +84,9 @@ export default class SongListScreen extends Component {
             console.log(error);
         }
     } 
-    
-    onPressPlayPauseButton(){
-        console.log('----onPressPlayPauseButton pressed');
-        MusicPlayer.toggle();
-    }
 
     render() {
+
         return (
             <View>
                 <FlatList
@@ -101,8 +94,8 @@ export default class SongListScreen extends Component {
                     keyExtractor={this._keyExtractor}
                     renderItem={this._renderItem}
                 />
-                <Button title="Play/Pause" onPress={this.onPressPlayPauseButton.bind(this)}/>
-            </View>
+                <PlayerComponent song={MusicPlayer.song}/>
+            </View >
         );
     }
 }

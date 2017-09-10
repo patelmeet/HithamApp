@@ -4,6 +4,7 @@ import {
     StyleSheet, 
     View, 
     TouchableHighlight, 
+    Image
  } from 'react-native'
 
 
@@ -21,10 +22,9 @@ export default class SongListItem extends React.PureComponent {
           underlayColor='#dddddd'>
           <View>
             <View style={styles.rowContainer}>
+              <Image style={styles.thumb} source = {{uri: 'file://'+item.songlist_pic_downloadLoc}}/>
               <View style={styles.textContainer}>
-                <Text style={styles.id}>{item.songlist_id}</Text>
-                <Text style={styles.name}
-                  numberOfLines={1}>{item.songlist_name}</Text>
+                <Text style={styles.id}>{item.songlist_name}</Text>
               </View>
             </View>
             <View style={styles.separator}/>
@@ -37,8 +37,8 @@ export default class SongListItem extends React.PureComponent {
   const styles = StyleSheet.create({
     thumb: {
       width: 80,
-      height: 80,
-      marginRight: 10
+      height: 50,
+      marginRight:10
     },
     textContainer: {
       flex: 1

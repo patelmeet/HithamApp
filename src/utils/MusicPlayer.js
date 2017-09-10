@@ -3,6 +3,7 @@ import Sound from 'react-native-sound'
 export default class MusicPlayer{
     static player=null;
     static isPlaying=false;
+    static song=defaultSong;
 
     static error_fn = error => {
         if (error) {
@@ -13,9 +14,11 @@ export default class MusicPlayer{
         console.log('duration in seconds: ' + MusicPlayer.player.getDuration() 
           + 'number of channels: ' + MusicPlayer.player.getNumberOfChannels());
         MusicPlayer.isPlaying = true; 
+        MusicPlayer.stateHandler(MusicPlayer.song);
         MusicPlayer.player.play( (success) => {
             if(success){
                 MusicPlayer.isPlaying=false;
+                MusicPlayer.stateHandler(MusicPlayer.song);
             }
         })  
     };
@@ -28,7 +31,11 @@ export default class MusicPlayer{
             }
             else if(MusicPlayer.player.isLoaded()== true ){
                 MusicPlayer.isPlaying=true;
-                MusicPlayer.player.play( (success) => { if(success){ MusicPlayer.isplaying=false }} );
+                MusicPlayer.player.play( (success) => { 
+                    if(success){ 
+                        MusicPlayer.isplaying=false;
+                    }
+                });
             }
         }
     }
@@ -36,9 +43,18 @@ export default class MusicPlayer{
     static stop(){
         MusicPlayer.player.stop();
         MusicPlayer.player.release();
+        MusicPlayer.song=defaultSong;
+        MusicPlayer.stateHandler(MusicPlayer.song);
+        MusicPlayer.stateHandler=null;
     }
 
-    static playNew(location){
-        MusicPlayer.player = new Sound(location,Sound.MAIN_BUNDLE,MusicPlayer.error_fn);
+    static playNew(song,stateHandler){
+        if(MusicPlayer.isPlaying){
+            MusicPlayer.player.stop();
+            MusicPlayer.player.release();
+        }
+        MusicPlayer.stateHandler = stateHandler;
+        MusicPlayer.song = song;
+        MusicPlayer.player = new Sound(song.downloadLoc,Sound.MAIN_BUNDLE,MusicPlayer.error_fn);
     }
 } 

@@ -10,6 +10,7 @@ import {
   AsyncStorage
 } from 'react-native';
 
+import RNFetchBlob from 'react-native-fetch-blob';
 import LoginComponent from '../components/LoginComponent';
 
 export default class LoginScreen extends Component {
@@ -25,7 +26,6 @@ export default class LoginScreen extends Component {
 
     async updateDB(response){
         var alllist = [];
-        var curres;
         for(let i=0 ; i<response.length ; i++){
             await AsyncStorage.getItem(''+response[i].songlist_id , (err,item) => {
                 if(item){
@@ -35,24 +35,30 @@ export default class LoginScreen extends Component {
                 }
                 else{
                     //Add
-                    var songid = ''+response[i].songlist_id;
+                    let songid = ''+response[i].songlist_id;
                     console.log('-----------else');
-                    curres = response[i];
+                    var curres = response[i];
                     curres['downloaded'] = false;
                     curres['downloadLoc'] = '';
-                    AsyncStorage.setItem(songid,JSON.stringify(curres), (err) => {
-                        if(err){
-                            console.log("---error"+err.message);
-                        }
-                        else{
-                            console.log("---Inserted Successfullly + "+ songid);
-                        }
-                    });
-                    alllist.push(curres);
+                    RNFetchBlob.config({fileCache : true, appendExt : 'jpg'})
+                    .fetch('GET',curres['songlist_pic_url'],{})
+                    .then((res) => {
+                        console.log('----download successful');
+                        curres['songlist_pic_downloadLoc']=res.path();
+                        AsyncStorage.setItem(songid,JSON.stringify(curres), (err) => {
+                            if(err){
+                                console.log("---error"+err.message);
+                            }
+                            else{
+                                console.log("---Inserted Successfullly + "+ JSON.stringify(curres));
+                            }
+                        });
+                        alllist.push(curres);  
+                    })
                 }
             });
         }
-        return alllist;
+        return await alllist;
     };
     
     async fetchAPIResponse(url){
@@ -71,9 +77,9 @@ export default class LoginScreen extends Component {
             if(flag){
                 //await console.log(serviceURL+'songs');
                 let response = await this.fetchAPIResponse(serviceURL+'userdata');
-                await console.log("response obtained"+JSON.stringify(response['songslist']));
+//                await console.log("response obtained"+JSON.stringify(response['songslist']));
                 let alllist = await this.updateDB(response['songslist']);
-                await console.log(alllist);
+//                await console.log(alllist);
                 return response;
             }
         }catch(error){
@@ -87,7 +93,7 @@ export default class LoginScreen extends Component {
         const { navigate } = this.props.navigation;
         await console.log("Doing Login...");
         let resp = await this.fetchUpdatePlayList();
-        await console.log(resp);
+//        await console.log(resp);
         await this.setState({response:resp});
         await navigate('PlayList',{ response : resp['playlists']});
         }catch(error){
@@ -126,5 +132,3 @@ const styles = StyleSheet.create({
 
   }
 });
-
-AppRegistry.registerComponent('Login', () => Login);
