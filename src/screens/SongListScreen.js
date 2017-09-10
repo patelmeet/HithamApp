@@ -1,59 +1,44 @@
 import React , { Component } from 'react'
 import { 
-    AppRegistry, 
-    Text, 
-    TextInput, 
-    StyleSheet, 
-    View, 
-    ListView, 
+    View,  
     Button,
-    TouchableHighlight, 
     AsyncStorage,
-    NetInfo
+    NetInfo,
+    FlatList
  } from 'react-native'
 
 import RNFetchBlob from 'react-native-fetch-blob';
 import MusicPlayer from '../utils/MusicPlayer';
+import SongListItem from '../components/SongListItem';
 
 export default class SongListScreen extends Component {
-
-    constructor() {
-        super();
-        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    static navigationOptions = {
+        title: 'My Songs', 
+    };
+    constructor(props){
+        super(props);
         this.state = {
-            userSongSource: ds,
+            songs:[],
             isplaying: false,
             playingsongID:0,
             cururl: ""
         };
     }
-
+      
     componentDidMount(){
-        this.showSongs();
-    }
-
-    setStateforSong(alllist){
-        this.setState({
-            userSongSource: this.state.userSongSource.cloneWithRows(alllist)
-        });
-    }
-
-    async showSongs(){
-        try{
         const { params } = this.props.navigation.state;    
-        await console.log("----loading songs "+JSON.stringify(params.response));
-        alllist=[];
-        for(index in params.response){
-            let item = await AsyncStorage.getItem(''+params.response[index]);
-            await console.log('key is '+index+' item is '+item);
-            await alllist.push(JSON.parse(item));
-        }
-        await this.setStateforSong(alllist);
-        await console.log('songs in the playlist: '+JSON.stringify(alllist));
-        }catch(error){
-            console.log(error);
-        }
-    } 
+        this.loadSongs(params.response);
+    }
+
+    _keyExtractor = (item,index) => index;
+    
+    _renderItem = (item,index) => (
+        <SongListItem
+            item={item.item}
+            index={index}
+            onPressItem={this._onPressItem}
+        />
+    );
 
     playsong(song){
         if(song['downloaded'] == true){
@@ -76,9 +61,9 @@ export default class SongListScreen extends Component {
         this.setState({cururl : song.songlist_url , playingsongID : song.songlist_id ,isplaying : true});
     }
 
-    onSongPress(song){
+    _onPressItem = (song) => {
         console.log('----onSongPress pressed && isplaying = '+this.state.isplaying);
-        console.log(JSON.stringify(song));
+        console.log('song data: '+JSON.stringify(song));
         if(this.state.isplaying == true){
             if(this.state.playingsongID == song.songlist_id)
                 return;
@@ -86,47 +71,38 @@ export default class SongListScreen extends Component {
                 MusicPlayer.stop();
         }
         this.playsong(song);
-    }
+    };
 
+    async loadSongs(list){
+        try{
+        alllist=[];
+        for(index in list){
+            let item = await AsyncStorage.getItem(''+list[index]);
+            await console.log('key is '+index+' item is '+item);
+            await alllist.push(JSON.parse(item));
+        }
+        await this.setState({songs: alllist });
+        await console.log('songs in the playlist: '+JSON.stringify(alllist));
+        }catch(error){
+            console.log(error);
+        }
+    } 
+    
     onPressPlayPauseButton(){
         console.log('----onPressPlayPauseButton pressed');
         MusicPlayer.toggle();
     }
 
-    renderRow(song, sectionId, rowId, highlightRow){
-        return(
-            <TouchableHighlight onPress={() => {this.onSongPress(song)}}>
-            <View style={styles.row}>
-                <Text style={styles.rowText}>{song.songlist_name}</Text>
-            </View>
-            </TouchableHighlight>
-        )
-    }
-
     render() {
-        return(
+        return (
             <View>
-                <ListView 
-                    dataSource={this.state.userSongSource}
-                    renderRow={this.renderRow.bind(this)}
+                <FlatList
+                    data={this.state.songs}
+                    keyExtractor={this._keyExtractor}
+                    renderItem={this._renderItem}
                 />
                 <Button title="Play/Pause" onPress={this.onPressPlayPauseButton.bind(this)}/>
             </View>
-        )
+        );
     }
 }
-
-const styles = StyleSheet.create({
-    row: {
-        flexDirection:'row',
-        justifyContent:'center',
-        padding:10,
-        backgroundColor: '#f4f4f4',
-        marginBottom:3
-    },
-    rowText: {
-        flex:1
-    }
-})
-
-AppRegistry.registerComponent('SongList', () => SongList )
