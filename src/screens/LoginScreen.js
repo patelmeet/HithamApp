@@ -24,6 +24,10 @@ export default class LoginScreen extends Component {
         this.doLogin = this.doLogin.bind(this);
     };  
 
+    componentDidMount(){
+        AsyncStorage.clear();
+    }
+
     async updateDB(response){
         var alllist = [];
         for(let i=0 ; i<response.length ; i++){

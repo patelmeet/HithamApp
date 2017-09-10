@@ -36,7 +36,7 @@ export default class PlayerComponent extends Component {
                         <View>
                             <Image 
                             style = { styles.thumb }
-                            source={{ uri : 'file://'+this.state.currentSong.songlist_pic_downloadLoc }} />
+                            source={{ uri : 'file://'+this.props.song.songlist_pic_downloadLoc }} />
                         </View>
                         <View style={styles.separator}/>
                         <View style={{flexGrow:1}}>
