@@ -24,10 +24,6 @@ export default class LoginScreen extends Component {
         this.doLogin = this.doLogin.bind(this);
     };  
 
-    componentDidMount(){
-        AsyncStorage.clear();
-    }
-
     async updateDB(response){
         var alllist = [];
         for(let i=0 ; i<response.length ; i++){
@@ -80,7 +76,7 @@ export default class LoginScreen extends Component {
             flag = await NetInfo.isConnected.fetch();
             if(flag){
                 //await console.log(serviceURL+'songs');
-                let response = await this.fetchAPIResponse(serviceURL+'userdata');
+                let response = await this.fetchAPIResponse(serviceURL);
 //                await console.log("response obtained"+JSON.stringify(response['songslist']));
                 let alllist = await this.updateDB(response['songslist']);
 //                await console.log(alllist);
