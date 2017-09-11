@@ -61,22 +61,33 @@ export default class LoginScreen extends Component {
         return await alllist;
     };
     
-    async fetchAPIResponse(url){
+    async fetchAPIResponse(url,u,p){
         try {
-            let response = await fetch(url);
+            await console.log('sending u: '+u+' and p: '+p);
+            let response = await fetch(url,{
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  student_id: u,
+                  student_password: p,
+                })
+              });
             let responseJson = await response.json();
             return responseJson;
           } catch(error) {
-            console.error(error);
+            console.error('fetch error: '+error);
           }
     };
     
-    async fetchUpdatePlayList(){
+    async fetchUpdatePlayList(u,p){
         try{
             flag = await NetInfo.isConnected.fetch();
             if(flag){
                 //await console.log(serviceURL+'songs');
-                let response = await this.fetchAPIResponse(serviceURL);
+                let response = await this.fetchAPIResponse(serviceURL,u,p);
 //                await console.log("response obtained"+JSON.stringify(response['songslist']));
                 let alllist = await this.updateDB(response['songslist']);
 //                await console.log(alllist);
@@ -92,8 +103,8 @@ export default class LoginScreen extends Component {
         try{
         const { navigate } = this.props.navigation;
         await console.log("Doing Login...");
-        let resp = await this.fetchUpdatePlayList();
-//        await console.log(resp);
+        let resp = await this.fetchUpdatePlayList(u,p);
+        await console.log('response obtained -->>>  '+JSON.stringify(resp));
         await this.setState({response:resp});
         await navigate('PlayList',{ response : resp['playlists']});
         }catch(error){
