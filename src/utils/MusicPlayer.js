@@ -23,6 +23,17 @@ export default class MusicPlayer{
         })  
     };
 
+    static getCurrentTime(){
+        MusicPlayer.player.getCurrentTime((seconds) => {return seconds}).catch((error)=>{return 0});
+    }
+
+    static getDuration(){
+        if(MusicPlayer.player!==null)
+            return MusicPlayer.player.getDuration();
+        else
+            return 1;
+    }
+
     static toggle(){
         if(MusicPlayer.player != null){
             if(MusicPlayer.isPlaying == true){

@@ -14,22 +14,76 @@ import {
 
 import MusicPlayer from '../utils/MusicPlayer';
 
+var songPercentage = 0;
+
 export default class PlayerComponent extends Component {
     constructor(props){
         super(props);
         this.state ={
-            currentSong : this.props.song
+            currentSong : this.props.song,
+            sliding : false,
+            currentTime : 0,
+            songDuration : 0,
         };
         
     };
+
+    onSlidingStart(){
+        console.log('onslidingstart');
+//        this.setState({ sliding: true });
+    }
+    
+    onSlidingChange(value){
+        console.log('onslidingchange'+value);
+        let newPosition = value * MusicPlayer.getDuration();
+        this.setState({ currentTime: newPosition });
+        MusicPlayer.player.setCurrentTime( newPosition );
+    }
+    
+    onSlidingComplete(){
+        console.log('onslidingcomplete');
+        
+//        this.refs.audio.seek( this.state.currentTime );
+//        this.setState({ sliding: false });
+    }
+
+    // shouldComponentUpdate(nextProps,nextState){
+    //     return (nextState.currentTime-this.state.currentTime>1);
+    // }
 
     onPressPlayPauseButton(){
         console.log('----onPressPlayPauseButton pressed');
         MusicPlayer.toggle();
     }
 
+    componentDidMount(){
+        console.log('componentdidmount');
+        this.interval = setInterval( () => this.setState( { time:Date.now()}) , 1000);
+        if(this.state.currentSong.songlist_id != 0){
+            MusicPlayer.player.getCurrentTime( (seconds) => {
+                if(this.state.currentSong.songlist_id != 0){
+                    this.setState({ currentTime : seconds });
+                }
+            });
+        }
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.interval);
+    }
+
+
     render() {
-        console.log('player render '+JSON.stringify(this.props.song));
+//        console.log('player render ');
+        
+        if(MusicPlayer.player != null ){
+            MusicPlayer.player.getCurrentTime( (seconds) => {
+                console.log('render '+seconds+' '+this.props.songDuration);
+                    songPercentage = seconds/MusicPlayer.getDuration();
+            });
+        }
+        console.log('render '+songPercentage);
+        
         return (
         
                     <View style={styles.rowContainer} >
@@ -42,6 +96,9 @@ export default class PlayerComponent extends Component {
                         <View style={{flexGrow:1}}>
                             <View>
                                 <Text style = {styles.name} > {this.props.song.songlist_name} </Text>
+                                <View>
+                                    <Text style={{color:'white'}}>{ Math.floor(MusicPlayer.getDuration()/60) }:{ Math.floor(MusicPlayer.getDuration()%60) }</Text>
+                                </View>
                             </View>
                             <View style={styles.separator}/>
                             <View style={{width:80,marginLeft:5}}>
@@ -49,15 +106,30 @@ export default class PlayerComponent extends Component {
                             </View>
                             <View style={styles.separator}/>
                             <View >
-                            <Slider
+                                <Slider
+                                onSlidingStart={ this.onSlidingStart.bind(this) }
+                                onSlidingComplete={ this.onSlidingComplete.bind(this) }
+                                onValueChange={ this.onSlidingChange.bind(this) }
+                                minimumTrackTintColor='#851c44'
+                                style={ styles.slider }
+                                trackStyle={ styles.sliderTrack }
+                                thumbStyle={ styles.sliderThumb }
+                                value={ songPercentage }/>
+                                
+
+                            </View>
+
+
+                            {/* <Slider
                                     value={0 }
                                     step={1}
                                     minimumValue={0}
                                     maximumValue={100}
                                     minimumTrackTintColor={'#009688'}
                                     maximumTrackTintColor={'#4caf50'}
-                            />
-                            </View>
+                                    thumbTintColor = {'#87ceff'}
+                            /> */}
+                            
                             <View style={styles.separator}/>
                         </View>
                     </View>
@@ -78,23 +150,33 @@ const styles = StyleSheet.create({
     separator: {
         height: 5,
     },
-    id: {
-        fontSize: 25,
-        fontWeight: 'bold',
-        color: '#48BBEC'
-    },
     name: {
+        color: '#48BBEC',
+        fontWeight: 'bold',
         fontSize: 20,
-        color: '#656565'
     },
     rowContainer: {
         flexDirection: 'row',
-        padding: 10
+        padding: 10,
+        backgroundColor : 'black'
     },
     buttonText: {
         textAlign: 'center',
         color: '#FFFFFF',
         fontWeight: '700'
     },
-
+    sliderTrack: {
+        height: 2,
+        backgroundColor: '#333',
+      },
+      sliderThumb: {
+        width: 10,
+        height: 10,
+        backgroundColor: '#f62976',
+        borderRadius: 10 / 2,
+        shadowColor: 'red',
+        shadowOffset: {width: 0, height: 0},
+        shadowRadius: 2,
+        shadowOpacity: 1,
+      }
 });

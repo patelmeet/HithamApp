@@ -4,7 +4,8 @@ import {
     Button,
     AsyncStorage,
     NetInfo,
-    FlatList
+    FlatList,
+    ScrollView
  } from 'react-native'
 
 import MusicPlayer from '../utils/MusicPlayer';
@@ -88,13 +89,16 @@ export default class SongListScreen extends Component {
     render() {
 
         return (
-            <View>
+            <View style = {{justifyContent: 'space-between', flex:1,flexDirection :'column'}}>
+                <ScrollView>
                 <FlatList
                     data={this.state.songs}
                     keyExtractor={this._keyExtractor}
                     renderItem={this._renderItem}
-                />
-                <PlayerComponent song={MusicPlayer.song}/>
+                /></ScrollView>
+                <View>
+                <PlayerComponent songDuration={MusicPlayer.getDuration()} song={MusicPlayer.song}/>
+                </View>
             </View >
         );
     }
