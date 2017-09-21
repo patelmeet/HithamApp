@@ -20,7 +20,7 @@ export default class SongListItem extends React.PureComponent {
         <TouchableHighlight
           onPress={this._onPress}
           underlayColor='#dddddd'>
-          <View>
+          <View  backgroundColor={item.songlist_song_color}>
             <View style={styles.rowContainer}>
               <Image style={styles.thumb} source = {{uri: 'file://'+item.songlist_pic_downloadLoc}}/>
               <View style={styles.textContainer}>

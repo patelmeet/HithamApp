@@ -1,6 +1,7 @@
 global.childID = 1;
 //global.serviceURL = "http://172.16.81.221:3000/userdata";
-global.serviceURL = "http://172.16.82.35:8080/HITHAM/webapi/songlist"
+//global.serviceURL = "http://172.16.82.35:8080/hitham/webapi/songlist"
+global.serviceURL = "http://ehrc-dev.iiitb.ac.in/hitham/webapi/songlist"
 global.driveFileId = "0B_-MwrFrWjn-TmpRSXpkeHJ0Szg";
 global.driveViewURL = "https://drive.google.com/file/d/";
 global.driveDownloadURL = "https://drive.google.com/uc?export=download&id=";

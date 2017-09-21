@@ -76,6 +76,7 @@ export default class LoginScreen extends Component {
                 })
               });
             let responseJson = await response.json();
+            await console.log('fetchAPIResponse: '+JSON.stringify(responseJson));
             return responseJson;
           } catch(error) {
             console.error('fetch error: '+error);
@@ -84,18 +85,22 @@ export default class LoginScreen extends Component {
     
     async fetchUpdatePlayList(u,p){
         try{
-            flag = await NetInfo.isConnected.fetch();
-            if(flag){
-                //await console.log(serviceURL+'songs');
+            if(NetInfo.isConnected.fetch()){
+                await console.log(serviceURL);
                 let response = await this.fetchAPIResponse(serviceURL,u,p);
-//                await console.log("response obtained"+JSON.stringify(response['songslist']));
+                await console.log("response obtained"+JSON.stringify(response['songslist']));
+                await AsyncStorage.setItem('playlists',JSON.stringify(response['playlists']));    
                 let alllist = await this.updateDB(response['songslist']);
-//                await console.log(alllist);
-                return response;
+                await console.log('dsd');
+                return response['playlists'];
+            }
+            else{
+                let playlists = await AsyncStorage.getItem("playlists");
+                return playlists;
             }
         }catch(error){
             console.log(error);
-            return "error_fetchUpdatePlayList";
+            return [];
         }
     };
 
@@ -103,10 +108,10 @@ export default class LoginScreen extends Component {
         try{
         const { navigate } = this.props.navigation;
         await console.log("Doing Login...");
-        let resp = await this.fetchUpdatePlayList(u,p);
-        await console.log('response obtained -->>>  '+JSON.stringify(resp));
-        await this.setState({response:resp});
-        await navigate('PlayList',{ response : resp['playlists']});
+        let playlists = await this.fetchUpdatePlayList(u,p);
+        await console.log('response obtained -->>>  '+JSON.stringify(playlists));
+        await this.setState({response:playlists});
+        await navigate('PlayList',{ response : playlists });
         }catch(error){
             console.log('Login Error : '+error);
         }  
