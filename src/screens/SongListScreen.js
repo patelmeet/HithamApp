@@ -22,6 +22,7 @@ export default class SongListScreen extends Component {
         this.state = {
             songs:[],
             song:'',
+            props:props,
         };
         this.updateSong = this.updateSong.bind(this);
     }
@@ -30,9 +31,14 @@ export default class SongListScreen extends Component {
     updateSong(song){
         this.setState({song:song});
     }
-      
+
+    componentWillUnmount(){
+        MusicPlayer.releaseHandler();
+    }
+
     componentDidMount(){
-        const { params } = this.props.navigation.state;    
+        const { params } = this.props.navigation.state;   
+        console.log('list of songs: '+params.response); 
         this.loadSongs(params.response);
         if(MusicPlayer.isPlaying)
             this.updateSong(MusicPlayer.song);
@@ -52,7 +58,6 @@ export default class SongListScreen extends Component {
         if(song['downloaded'] != true){
             //Download and then play
             let updatedSong = await FileStore.downloadSong(song);
-            await console.log('----Downloading')
             await AsyncStorage.setItem(''+song.songlist_id,JSON.stringify(updatedSong));
         }
         await MusicPlayer.playNew(song,this.updateSong);
@@ -60,7 +65,7 @@ export default class SongListScreen extends Component {
     }
 
     _onPressItem = (song) => {
-        console.log('----onSongPress pressed && isplaying = '+this.state.isplaying);
+        console.log('----onSongPress pressed && isplaying = '+MusicPlayer.isPlaying);
         console.log('song data: '+JSON.stringify(song));
         if(MusicPlayer.isplaying == true){
             if(MusicPlayer.song.playingsongID == song.songlist_id)
@@ -73,8 +78,9 @@ export default class SongListScreen extends Component {
 
     async loadSongs(list){
         try{
-        alllist=[];
-        for(index in list){
+        alllist = [];
+        await console.log('loading list: '+list);
+        for(var index = 0 ; index < list.length; index++ ){
             let item = await AsyncStorage.getItem(''+list[index]);
             await console.log('key is '+index+' item is '+item);
             await alllist.push(JSON.parse(item));

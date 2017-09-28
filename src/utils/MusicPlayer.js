@@ -3,7 +3,8 @@ import Sound from 'react-native-sound'
 export default class MusicPlayer{
     static player=null;
     static isPlaying=false;
-    static song=defaultSong;
+    static song=DEFAULT_SONG;
+    static stateHandler = null;
 
     static error_fn = error => {
         if (error) {
@@ -22,6 +23,10 @@ export default class MusicPlayer{
             }
         })  
     };
+
+    static releaseHandler(){
+        MusicPlayer.stateHandler = null;
+    }
 
     static getCurrentTime(){
         MusicPlayer.player.getCurrentTime((seconds) => {return seconds}).catch((error)=>{return 0});
@@ -54,8 +59,9 @@ export default class MusicPlayer{
     static stop(){
         MusicPlayer.player.stop();
         MusicPlayer.player.release();
-        MusicPlayer.song=defaultSong;
-        MusicPlayer.stateHandler(MusicPlayer.song);
+        MusicPlayer.song=DEFAULT_SONG;
+        if(MusicPlayer.stateHandler != null)
+            MusicPlayer.stateHandler(MusicPlayer.song);
         MusicPlayer.stateHandler=null;
     }
 

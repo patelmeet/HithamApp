@@ -78,7 +78,7 @@ export default class PlayerComponent extends Component {
         
         if(MusicPlayer.player != null ){
             MusicPlayer.player.getCurrentTime( (seconds) => {
-                console.log('render '+seconds+' '+this.props.songDuration);
+                //console.log('render '+seconds+' '+this.props.songDuration);
                     songPercentage = seconds/MusicPlayer.getDuration();
             });
         }
