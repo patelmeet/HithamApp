@@ -81,6 +81,7 @@ export default class SongListScreen extends Component {
         alllist = [];
         await console.log('loading list: '+list);
         for(var index = 0 ; index < list.length; index++ ){
+            await console.log('getting id '+list[index]);
             let item = await AsyncStorage.getItem(''+list[index]);
             await console.log('key is '+index+' item is '+item);
             await alllist.push(JSON.parse(item));

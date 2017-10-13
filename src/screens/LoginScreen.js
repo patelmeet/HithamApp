@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import FileStore from '../utils/FileStore';
+import DataStore from '../utils/DataStore';
 import LoginComponent from '../components/LoginComponent';
 
 export default class LoginScreen extends Component {
@@ -54,7 +55,7 @@ export default class LoginScreen extends Component {
                 let response = await this.fetchAPIResponse(serviceURL,u,p);
                 await console.log("response obtained"+JSON.stringify(response['songslist']));
                 await AsyncStorage.setItem('playlists',JSON.stringify(response['playlists']));    
-                await FileStore.downloadSongImages(response['songslist']);
+                await DataStore.updateSongs(response['songslist']);
                 return response['playlists'];
             }
             else{
