@@ -55,10 +55,10 @@ export default class SongListScreen extends Component {
     );
 
     async playsong(song){
-        if(song['downloaded'] != true){
+        if(song[SONG_IS_DOWNLOADED] != true){
             //Download and then play
             let updatedSong = await FileStore.downloadSong(song);
-            await AsyncStorage.setItem(''+song.songlist_id,JSON.stringify(updatedSong));
+            await AsyncStorage.setItem(''+song[SONG_ID],JSON.stringify(updatedSong));
         }
         await MusicPlayer.playNew(song,this.updateSong);
         return true;
@@ -68,7 +68,7 @@ export default class SongListScreen extends Component {
         console.log('----onSongPress pressed && isplaying = '+MusicPlayer.isPlaying);
         console.log('song data: '+JSON.stringify(song));
         if(MusicPlayer.isplaying == true){
-            if(MusicPlayer.song.playingsongID == song.songlist_id)
+            if(MusicPlayer.song[SONG_ID] == song[SONG_ID])
                 return;
             else
                 MusicPlayer.stop();

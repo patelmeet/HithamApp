@@ -6,4 +6,4 @@ global.driveFileId = "0B_-MwrFrWjn-TmpRSXpkeHJ0Szg";
 global.driveViewURL = "https://drive.google.com/file/d/";
 global.driveDownloadURL = "https://drive.google.com/uc?export=download&id=";
 global.DEFAULT_SONG = JSON.parse('{"songlist_id":0,"songlist_url":"","songlist_name":"Default","songlist_pic_url":"","songlist_song_color":"","downloaded":false,"downloadLoc":"","songlist_pic_downloadLoc":"/data/user/0/com.hitham/files/RNFetchBlobTmp_gd1y9cv303o5mgtaw77w2a.jpg"}');
-global.NO_IMAGE_PATH = 'HithamApp/src/images/No_Image_Available.jpg';
+global.NO_IMAGE_PATH = '../images/No_Image_Available.jpg';

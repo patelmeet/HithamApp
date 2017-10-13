@@ -53,10 +53,10 @@ export default class LoginScreen extends Component {
             if(NetInfo.isConnected.fetch()){
                 await console.log(serviceURL);
                 let response = await this.fetchAPIResponse(serviceURL,u,p);
-                await console.log("response obtained"+JSON.stringify(response['songslist']));
-                await AsyncStorage.setItem('playlists',JSON.stringify(response['playlists']));    
-                await DataStore.updateSongs(response['songslist']);
-                return response['playlists'];
+                await console.log("response obtained"+JSON.stringify(response));
+                await AsyncStorage.setItem('playlists',JSON.stringify(response[RESPONSE_PLAYLISTS]));    
+                await DataStore.updateSongs(response[RESPONSE_SONGS]);
+                return response[RESPONSE_PLAYLISTS];
             }
             else{
                 let playlists = await AsyncStorage.getItem("playlists");

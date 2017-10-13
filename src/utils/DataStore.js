@@ -21,8 +21,8 @@ export default class DataStore {
             console.log(songsList.length);
             for(let i=0 ; i<songsList.length ; i++){
                 console.log('i is '+i);
-                if(!DataStore.containsKey(songsList[i].songlist_id)){
-                    await console.log('adding song : '+songsList[i].songlist_id);
+                if(!DataStore.containsKey(songsList[i][SONG_ID])){
+                    await console.log('adding song : '+songsList[i][SONG_ID]);
                     FileStore.updateSongInfo(songsList[i]);
                 }
             }

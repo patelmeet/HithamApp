@@ -9,7 +9,7 @@ import {
 
 export default class PlayListItem extends React.PureComponent {
     _onPress = () => {
-      this.props.onPressItem(this.props.item.playlist_songIDs);
+      this.props.onPressItem(this.props.item[PLAYLIST_SONGS]);
     }
   
     render() {
@@ -22,9 +22,9 @@ export default class PlayListItem extends React.PureComponent {
           <View>
             <View style={styles.rowContainer}>
               <View style={styles.textContainer}>
-                <Text style={styles.id}>{item.playlist_id}</Text>
+                <Text style={styles.id}>{item[PLAYLIST_ID]}</Text>
                 <Text style={styles.name}
-                  numberOfLines={1}>{item.playlist_name}</Text>
+                  numberOfLines={1}>{item[PLAYLIST_NAME]}</Text>
               </View>
             </View>
             <View style={styles.separator}/>

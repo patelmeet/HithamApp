@@ -59,9 +59,9 @@ export default class PlayerComponent extends Component {
     componentDidMount(){
         console.log('componentdidmount');
         this.interval = setInterval( () => this.setState( { time:Date.now()}) , 1000);
-        if(this.state.currentSong.songlist_id != 0){
+        if(this.state.currentSong[SONG_ID] != 0){
             MusicPlayer.player.getCurrentTime( (seconds) => {
-                if(this.state.currentSong.songlist_id != 0){
+                if(this.state.currentSong[SONG_ID] != 0){
                     this.setState({ currentTime : seconds });
                 }
             });
@@ -90,12 +90,12 @@ export default class PlayerComponent extends Component {
                         <View>
                             <Image 
                             style = { styles.thumb }
-                            source={{ uri : 'file://'+this.props.song.songlist_pic_downloadLoc }} />
+                            source={{ uri : 'file://'+this.props.song[SONG_ICON_PATH]}} />
                         </View>
                         <View style={styles.separator}/>
                         <View style={{flexGrow:1}}>
                             <View>
-                                <Text style = {styles.name} > {this.props.song.songlist_name} </Text>
+                                <Text style = {styles.name} > {this.props.song[SONG_NAME]} </Text>
                                 <View>
                                     <Text style={{color:'white'}}>{ Math.floor(MusicPlayer.getDuration()/60) }:{ Math.floor(MusicPlayer.getDuration()%60) }</Text>
                                 </View>

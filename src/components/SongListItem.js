@@ -20,11 +20,11 @@ export default class SongListItem extends React.PureComponent {
         <TouchableHighlight
           onPress={this._onPress}
           underlayColor='#dddddd'>
-          <View  backgroundColor={item.songlist_song_color}>
+          <View  backgroundColor={item[SONG_COLOR]}>
             <View style={styles.rowContainer}>
-              <Image style={styles.thumb} source = {{uri: 'file://'+item.songlist_pic_downloadLoc}}/>
+              <Image style={styles.thumb} source = {{uri: 'file://'+item[SONG_ICON_PATH]}}/>
               <View style={styles.textContainer}>
-                <Text style={styles.id}>{item.songlist_name}</Text>
+              <Text style={styles.id}>{item[SONG_NAME]}</Text>
               </View>
             </View>
             <View style={styles.separator}/>

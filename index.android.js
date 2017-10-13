@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import {StackNavigator} from 'react-navigation';
 import './src/global';
+import './src/Mapping';
 import LoginScreen from './src/screens/LoginScreen';
 import SongListScreen from './src/screens//SongListScreen';
 import PlayListScreen from './src/screens/PlayListScreen';

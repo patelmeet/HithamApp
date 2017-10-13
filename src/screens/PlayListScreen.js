@@ -27,13 +27,13 @@ export default class PlayListScreen extends Component {
         
     _onPressItem = (list) => {
         const { navigate } = this.props.navigation;
-        console.log('sending... '+list);
+        console.log('sending to SongList Screen: '+list);
         navigate('SongList',{response:list});
     };
     
     render() {
         const { params } = this.props.navigation.state; 
-        console.log("data received "+params.response); 
+        console.log("PlayList Screen Data Received "+params.response); 
         return (
             <FlatList
                 data={params.response}
