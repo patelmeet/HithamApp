@@ -12,6 +12,7 @@ import {
 
 import FileStore from '../utils/FileStore';
 import DataStore from '../utils/DataStore';
+import Rest from '../utils/Rest';
 import LoginComponent from '../components/LoginComponent';
 
 export default class LoginScreen extends Component {
@@ -24,63 +25,34 @@ export default class LoginScreen extends Component {
         };
         this.doLogin = this.doLogin.bind(this);
     };  
-
     
-    async fetchAPIResponse(url,u,p){
-        try {
-            await console.log('sending u: '+u+' and p: '+p);
-            let response = await fetch(url,{
-                method: 'POST',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  student_id: u,
-                  student_password: p,
-                })
-              });
-            let responseJson = await response.json();
-            //await console.log('fetchAPIResponse: '+JSON.stringify(responseJson));
-            return responseJson;
-          } catch(error) {
-            console.error('fetch error: '+error);
-        }
-    };
-    
-    async fetchUpdatePlayList(u,p){
+    async fetchUpdatePlayList(response){
         try{
-            if(NetInfo.isConnected.fetch()){
-                await console.log(serviceURL);
-                let response = await this.fetchAPIResponse(serviceURL,u,p);
-                await console.log("response obtained"+JSON.stringify(response));
-                await AsyncStorage.setItem('playlists',JSON.stringify(response[RESPONSE_PLAYLISTS]));    
+            if(response != null){                
+                await AsyncStorage.setItem(RESPONSE_PLAYLISTS,JSON.stringify(response[RESPONSE_PLAYLISTS]));    
                 await DataStore.updateSongs(response[RESPONSE_SONGS]);
                 return response[RESPONSE_PLAYLISTS];
             }
-            else{
-                let playlists = await AsyncStorage.getItem("playlists");
-                return playlists;
-            }
+            else
+                return DataStore.getPlaylists();
         }catch(error){
-            console.log(error);
-            await AsyncStorage.getItem("playlists",(err,item)=>{
-                if(item)
-                    return item;
-                else
-                    console.log("No Playlist Info Available");
-                    return [];
-            });
+            console.log("No Internet: "+error);
+            return DataStore.getPlaylists();
         }
     };
 
     async doLogin(u,p){
         try{
-        const { navigate } = this.props.navigation;
-        await console.log("Doing Login...");
-        let playlists = await this.fetchUpdatePlayList(u,p);
-        await console.log('response obtained -->>>  '+JSON.stringify(playlists));
+        var body = JSON.stringify({student_id: u,student_password: p});
+        let response = await Rest.post(serviceURL,body);
+        await console.log('response obtained -->>>  '+JSON.stringify(response));
+        if(response != null && response[RESPONSE_STATUS]==false){
+            console.log("Incorrect Login Credentials");
+            return;
+        }
+        let playlists = await this.fetchUpdatePlayList(response);
         await this.setState({response:playlists});
+        const { navigate } = this.props.navigation;
         await navigate('PlayList',{ response : playlists });
         }catch(error){
             console.log('Login Error : '+error);

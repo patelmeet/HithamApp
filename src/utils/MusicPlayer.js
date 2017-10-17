@@ -1,5 +1,5 @@
-import Sound from 'react-native-sound'
-
+import Sound from 'react-native-sound';
+import Logger from '../utils/Logger';
 export default class MusicPlayer{
     static player=null;
     static isPlaying=false;
@@ -18,6 +18,7 @@ export default class MusicPlayer{
         MusicPlayer.stateHandler(MusicPlayer.song);
         MusicPlayer.player.play( (success) => {
             if(success){
+                Logger.record(MusicPlayer.song[SONG_ID],"END",0);
                 MusicPlayer.isPlaying=false;
                 MusicPlayer.stateHandler(MusicPlayer.song);
             }
@@ -29,7 +30,11 @@ export default class MusicPlayer{
     }
 
     static getCurrentTime(){
-        MusicPlayer.player.getCurrentTime((seconds) => {return seconds}).catch((error)=>{return 0});
+        if(MusicPlayer.player!==null){
+            MusicPlayer.player.getCurrentTime((seconds) => {return seconds}).catch((error)=>{return 0});
+        }
+        else
+            return 0;
     }
 
     static getDuration(){
@@ -42,13 +47,16 @@ export default class MusicPlayer{
     static toggle(){
         if(MusicPlayer.player != null){
             if(MusicPlayer.isPlaying == true){
+                Logger.record(MusicPlayer.song[SONG_ID],"PAUSED",0);
                 MusicPlayer.player.pause();
                 MusicPlayer.isPlaying=false;
             }
             else if(MusicPlayer.player.isLoaded()== true ){
                 MusicPlayer.isPlaying=true;
-                MusicPlayer.player.play( (success) => { 
+                Logger.record(MusicPlayer.song[SONG_ID],"CONTINUE",0); 
+                MusicPlayer.player.play( (success) => {
                     if(success){ 
+                        Logger.record(MusicPlayer.song[SONG_ID],"END",0);
                         MusicPlayer.isplaying=false;
                     }
                 });
@@ -57,6 +65,7 @@ export default class MusicPlayer{
     }
 
     static stop(){
+        Logger.record(MusicPlayer.song[SONG_ID],"STOP",0);
         MusicPlayer.player.stop();
         MusicPlayer.player.release();
         MusicPlayer.song=DEFAULT_SONG;
@@ -72,6 +81,8 @@ export default class MusicPlayer{
         }
         MusicPlayer.stateHandler = stateHandler;
         MusicPlayer.song = song;
-        MusicPlayer.player = new Sound(song.downloadLoc,Sound.MAIN_BUNDLE,MusicPlayer.error_fn);
+        console.log('playing new song: '+JSON.stringify(song));
+        MusicPlayer.player = new Sound(song[SONG_DOWNLOAD_PATH],Sound.MAIN_BUNDLE,MusicPlayer.error_fn);
+        Logger.record(MusicPlayer.song[SONG_ID],"PLAY",0);
     }
 } 

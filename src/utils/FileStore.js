@@ -27,7 +27,7 @@ export default class FileStore {
         song[SONG_DOWNLOAD_PATH]=res.path();
         return song;
         }catch(error){
-            console.log("downloadSong Error :"+error);
+            await console.log("downloadSong Error :"+error);
             return song;
         }
     }    

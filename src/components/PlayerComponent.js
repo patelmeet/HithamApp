@@ -58,8 +58,9 @@ export default class PlayerComponent extends Component {
 
     componentDidMount(){
         console.log('componentdidmount');
+        console.log('player component song: '+JSON.stringify(this.state.currentSong));
         this.interval = setInterval( () => this.setState( { time:Date.now()}) , 1000);
-        if(this.state.currentSong[SONG_ID] != 0){
+        if(this.state.currentSong[SONG_ID] != 0 && MusicPlayer.player!=null){
             MusicPlayer.player.getCurrentTime( (seconds) => {
                 if(this.state.currentSong[SONG_ID] != 0){
                     this.setState({ currentTime : seconds });

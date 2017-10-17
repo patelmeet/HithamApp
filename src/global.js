@@ -1,9 +1,10 @@
 global.childID = 1;
-//global.serviceURL = "http://172.16.81.221:3000/userdata";
-//global.serviceURL = "http://172.16.82.35:8080/hitham/webapi/songlist"
-global.serviceURL = "http://ehrc-dev.iiitb.ac.in/hitham/webapi/songlist"
+global.serviceURL = "http://172.16.80.254:8080/hitham/webapi/songlist"
+//global.serviceURL = "http://ehrc-dev.iiitb.ac.in/hitham/webapi/songlist"
+global.logURL = "http://172.16.86.150:8080/HITHAM/webapi/studentActivity/logActivity"
+//global.logURL = "http://ehrc-dev.iiitb.ac.in/hitham/webapi/songlist"
 global.driveFileId = "0B_-MwrFrWjn-TmpRSXpkeHJ0Szg";
 global.driveViewURL = "https://drive.google.com/file/d/";
 global.driveDownloadURL = "https://drive.google.com/uc?export=download&id=";
-global.DEFAULT_SONG = JSON.parse('{"songlist_id":0,"songlist_url":"","songlist_name":"Default","songlist_pic_url":"","songlist_song_color":"","downloaded":false,"downloadLoc":"","songlist_pic_downloadLoc":"/data/user/0/com.hitham/files/RNFetchBlobTmp_gd1y9cv303o5mgtaw77w2a.jpg"}');
+global.DEFAULT_SONG = JSON.parse('{"recording_id":1,"song_id":3,"recording_name":"RAMAKRISHNARU_1","recording_pic_url":"https://drive.google.com/uc?export=download&id=0BwtDpsO0CtJZblJweG1mMFJ3TE0","song_taal":"ata","song_composer":"ramanujam","song_name":"RAMAKRISHNARU","song_singer":"K.Yesudas","song_url":"https://drive.google.com/uc?export=download&id=0BwtDpsO0CtJZck9vYU9QUEttMXc","recording_color":"#000066","song_raaga":"Amrithavarshini"}');
 global.NO_IMAGE_PATH = '../images/No_Image_Available.jpg';

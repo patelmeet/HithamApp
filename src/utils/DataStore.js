@@ -1,34 +1,44 @@
 import { AsyncStorage } from 'react-native';
 import FileStore from '../utils/FileStore';
 export default class DataStore {
+    
     static updatePlayLists(list){
         for(playlist in list){
             
         }
     }
 
-    static containsKey(key){
-        AsyncStorage.getItem(''+key,(err,item)=>{
-            if(item)
-                return true;
-            return false;
+    static getPlaylists(){
+        AsyncStorage.getItem(RESPONSE_PLAYLISTS,(err,item)=>{
+            if(item!=null)
+                return item;
+            else
+                console.log("No Playlist Info Available");
+                return [];
         });
-        return false;
+    }
+
+    static async containsKey(key){
+        let item = await AsyncStorage.getItem(''+key);
+        await console.log(key+' is is '+(item != null));
+        return (item !== null);
     }
 
     static async updateSongs(songsList){
         try{
-            console.log(songsList.length);
             for(let i=0 ; i<songsList.length ; i++){
-                console.log('i is '+i);
-                if(!DataStore.containsKey(songsList[i][SONG_ID])){
+                let flag = await DataStore.containsKey(songsList[i][SONG_ID]);
+                console.log('flag is '+flag);
+                if(flag!=true){
                     await console.log('adding song : '+songsList[i][SONG_ID]);
-                    FileStore.updateSongInfo(songsList[i]);
+                    await FileStore.updateSongInfo(songsList[i]);
                 }
+                else
+                    await console.log('song already eeexists: '+songsList[i][SONG_ID]);
             }
-            console.log('out of for loop ');
+            await console.log('out of for loop ');
         }catch(error){
-            console.log('download Image Error: '+error);
+            await console.log('download Image Error: '+error);
         }    
     }
 }
