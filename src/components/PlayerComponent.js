@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 import MusicPlayer from '../utils/MusicPlayer';
-
+import Logger from '../utils/Logger';
 var songPercentage = 0;
 
 export default class PlayerComponent extends Component {
@@ -42,7 +42,10 @@ export default class PlayerComponent extends Component {
     
     onSlidingComplete(){
         console.log('onslidingcomplete');
-        
+        MusicPlayer.player.getCurrentTime( (seconds) => {
+            Logger.record(MusicPlayer.song[SONG_ID],"MOVED_TO_POSITION",seconds);
+        }); 
+
 //        this.refs.audio.seek( this.state.currentTime );
 //        this.setState({ sliding: false });
     }
@@ -58,7 +61,6 @@ export default class PlayerComponent extends Component {
 
     componentDidMount(){
         console.log('componentdidmount');
-        console.log('player component song: '+JSON.stringify(this.state.currentSong));
         this.interval = setInterval( () => this.setState( { time:Date.now()}) , 1000);
         if(this.state.currentSong[SONG_ID] != 0 && MusicPlayer.player!=null){
             MusicPlayer.player.getCurrentTime( (seconds) => {

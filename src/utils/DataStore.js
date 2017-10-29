@@ -2,10 +2,47 @@ import { AsyncStorage } from 'react-native';
 import FileStore from '../utils/FileStore';
 export default class DataStore {
     
+    static std_pk = 5;
+
+    static setStudentPK(value){
+        DataStore.std_pk = value;
+        AsyncStorage.setItem(STUDENT_PK,value);
+        console.log("setting student pk: "+value);
+    }
+
+    static getStudentPK(){
+        return DataStore.std_pk;
+    }
+
     static updatePlayLists(list){
         for(playlist in list){
             
         }
+    }
+
+    static getItem(key){
+        var item = (function (){
+            return new Promise((resolve, reject) => {
+               AsyncStorage.getItem(key).then((value) => {
+                 resolve(value);
+              }).done();
+            });
+      
+      });
+      return item;
+    }
+
+    static getProfile(){
+        
+    }
+
+    static setProfile(func){
+        AsyncStorage.getItem(RESPONSE_PROFILE,(err,item)=>{
+            if(item!=null)
+                func(item);
+            else
+                func(DEFAULT_PROFILE);
+        });
     }
 
     static getPlaylists(){
@@ -34,7 +71,7 @@ export default class DataStore {
                     await FileStore.updateSongInfo(songsList[i]);
                 }
                 else
-                    await console.log('song already eeexists: '+songsList[i][SONG_ID]);
+                    await console.log('song already exists: '+songsList[i][SONG_ID]);
             }
             await console.log('out of for loop ');
         }catch(error){

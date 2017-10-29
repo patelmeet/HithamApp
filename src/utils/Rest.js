@@ -8,6 +8,7 @@ export default class Rest{
                   'Accept': 'application/json',
                   'Content-Type': 'application/json',
                 },
+                timeout:2000,
                 body: body
               });
             let responseJson = await response.json();

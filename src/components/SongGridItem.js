@@ -8,11 +8,11 @@ import {
  } from 'react-native'
 
 
-export default class SongListItem extends React.PureComponent {
+export default class SongGridItem extends React.PureComponent {
     _onPress = () => {
       this.props.onPressItem(this.props.item);
     }
-  
+
     render() {
       const item = this.props.item;
       return (
@@ -20,43 +20,49 @@ export default class SongListItem extends React.PureComponent {
           onPress={this._onPress}
           underlayColor='#dddddd'>
           <View  backgroundColor={item[SONG_COLOR]}>
-            <View style={styles.rowContainer}>
-              <Image style={styles.thumb} source = {{uri: 'file://'+item[SONG_ICON_PATH]}}/>
-              <View style={styles.textContainer}>
-              <Text style={styles.id}>{item[SONG_NAME]}</Text>
-              </View>
-            </View>
-            <View style={styles.separator}/>
+            <View style={stylesDefault.rowContainer}>
+              <Image style={stylesDefault.thumb} source = {{uri: 'file://'+item[SONG_ICON_PATH]}}/>
+            </View> 
           </View>
         </TouchableHighlight>
       );
     }
   }
+  const stylesDefault = StyleSheet.create({
+    thumb: {
+      width: 130,
+      height: 100,
+    },
+    rowContainer: {
+      flexDirection: 'row',
+      padding: 15,
+      borderWidth: 4,
+      borderColor: 'white',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+  });
 
   const styles = StyleSheet.create({
     thumb: {
       width: 80,
-      height: 50,
+      height: 60,
       marginRight:10
     },
     textContainer: {
       flex: 1
     },
-    separator: {
-      height: 1,
-      backgroundColor: '#dddddd'
-    },
     id: {
-      fontSize: 25,
+      fontSize: 20,
       fontWeight: 'bold',
       color: '#48BBEC'
     },
-    name: {
-      fontSize: 20,
-      color: '#656565'
-    },
     rowContainer: {
       flexDirection: 'row',
-      padding: 10
+      padding: 10,
+      borderWidth: 4,
+      borderColor: 'white',
+      alignItems: 'center',
+      justifyContent: 'center'
     },
   });

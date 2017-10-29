@@ -29,8 +29,10 @@ export default class LoginScreen extends Component {
     async fetchUpdatePlayList(response){
         try{
             if(response != null){                
+                await AsyncStorage.setItem(RESPONSE_PROFILE,response[RESPONSE_PROFILE]);
                 await AsyncStorage.setItem(RESPONSE_PLAYLISTS,JSON.stringify(response[RESPONSE_PLAYLISTS]));    
                 await DataStore.updateSongs(response[RESPONSE_SONGS]);
+                await DataStore.setStudentPK(response[STUDENT_PK]);
                 return response[RESPONSE_PLAYLISTS];
             }
             else
@@ -43,17 +45,17 @@ export default class LoginScreen extends Component {
 
     async doLogin(u,p){
         try{
-        var body = JSON.stringify({student_id: u,student_password: p});
+        let encrypted_p = encryptme(p);    
+        var body = JSON.stringify({student_id: u,student_password: encrypted_p});
         let response = await Rest.post(serviceURL,body);
-        await console.log('response obtained -->>>  '+JSON.stringify(response));
+//        await console.log('response obtained -->>>  '+JSON.stringify(response));
         if(response != null && response[RESPONSE_STATUS]==false){
             console.log("Incorrect Login Credentials");
             return;
         }
         let playlists = await this.fetchUpdatePlayList(response);
-        await this.setState({response:playlists});
         const { navigate } = this.props.navigation;
-        await navigate('PlayList',{ response : playlists });
+        await navigate('PlayList',{ playlists : playlists });
         }catch(error){
             console.log('Login Error : '+error);
         }  

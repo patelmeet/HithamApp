@@ -6,7 +6,7 @@ export default class FileStore {
     static async updateSongInfo(song){
         song[SONG_IS_DOWNLOADED] = false;
         song[SONG_DOWNLOAD_PATH] = '';
-        await RNFetchBlob.config({fileCache : true, appendExt : 'jpg'})
+        await RNFetchBlob.config({fileCache : true, appendExt : 'jpg',timeout:2000})
         .fetch('GET',song[SONG_ICON_URL],{})
         .then((res) => {
             console.log('----pic download successful');
@@ -21,7 +21,7 @@ export default class FileStore {
 
     static async downloadSong(song){
         try{
-        let res = await RNFetchBlob.config({fileCache : true}).fetch('GET',song[SONG_URL],{});
+        let res = await RNFetchBlob.config({fileCache : true,timeout:2000}).fetch('GET',song[SONG_URL],{});
         await console.log('----song download successful: '+song[SONG_ID]);
         song[SONG_IS_DOWNLOADED] = true;
         song[SONG_DOWNLOAD_PATH]=res.path();

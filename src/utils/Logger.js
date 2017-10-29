@@ -1,25 +1,24 @@
 import {
     NetInfo
   } from 'react-native';
-
+import MusicPlayer from '../utils/MusicPlayer';
 import Rest from '../utils/Rest';
+import DataStore from '../utils/DataStore';
 export default class Logger {
-    static student_id = 1;
-    static PLAY = "PLAY";
 
     static async record(rid,activity,time){
         try{
             if(NetInfo.isConnected.fetch()){
                 let body = JSON.stringify({
-                    student_id : "MT2016001",
-                    recording_id : 1,
+                    student_pk : DataStore.getStudentPK(),
+                    recording_id : MusicPlayer.getRecordingID(),
                     student_activity_type : activity,
-                    student_activity_time : 1
+                    student_activity_time : Math.round(time * 100) / 100.0,
                 });
                 let response = await Rest.post(logURL,body);
             }
         }catch(error){
-            await console.log('Unable to record actiity:   '+error);
+            await console.log('Unable to record activity:   '+error);
 
         }
     }

@@ -17,3 +17,4 @@ global.RESPONSE_SONGS = 'songslist';
 global.RESPONSE_PLAYLISTS = 'playlists';
 global.RESPONSE_PROFILE = 'profile';
 global.RESPONSE_STATUS = 'status';
+global.STUDENT_PK = 'student_pk';
