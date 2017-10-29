@@ -4,6 +4,7 @@ export default class MusicPlayer{
     static player=null;
     static isPlaying=false;
     static song=DEFAULT_SONG;
+    static paused = false;
     static stateHandler = null;
     static currentTime = 0;
     static error_fn = error => {
@@ -52,8 +53,10 @@ export default class MusicPlayer{
 
     static toggle(){
         try{
+            MusicPlayer.paused = false;
             if(MusicPlayer.player != null){
                 if(MusicPlayer.isPlaying == true){
+                    MusicPlayer.paused = true;
                     MusicPlayer.player.getCurrentTime( (seconds) => {
                         Logger.record(MusicPlayer.song[SONG_ID],"PAUSED",seconds);
                     });
@@ -95,6 +98,7 @@ export default class MusicPlayer{
         }
         MusicPlayer.stateHandler = stateHandler;
         MusicPlayer.song = song;
+        MusicPlayer.paused = false;
 //        console.log('playing new song: '+JSON.stringify(song));
         MusicPlayer.player = new Sound(song[SONG_DOWNLOAD_PATH],Sound.MAIN_BUNDLE,MusicPlayer.error_fn);
     }

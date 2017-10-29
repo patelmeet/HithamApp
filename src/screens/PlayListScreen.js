@@ -1,9 +1,15 @@
 'use strict';
 
 import React, { Component } from 'react'
-import { FlatList } from 'react-native';
+import { 
+    View,  
+    Button,
+    FlatList,
+    ScrollView
+ } from 'react-native';
 import PlayListItem from '../components/PlayListItem';
 import MusicPlayer from '../utils/MusicPlayer';
+import PlayerComponent from '../components/PlayerComponent';
 
 export default class PlayListScreen extends Component {
     static navigationOptions = {
@@ -33,11 +39,15 @@ export default class PlayListScreen extends Component {
     render() {
         const { params } = this.props.navigation.state; 
         return (
+            <View style = {{justifyContent: 'space-between', flex:1,flexDirection :'column'}}>
+            <ScrollView>
             <FlatList
                 data={params.playlists}
                 keyExtractor={this._keyExtractor}
                 renderItem={this._renderItem}
             />
+            </ScrollView>
+        </View >
         );
     }
 }

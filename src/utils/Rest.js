@@ -12,6 +12,7 @@ export default class Rest{
                 body: body
               });
             let responseJson = await response.json();
+            console.log("response: "+JSON.stringify(responseJson));
             return responseJson;
           } catch(error) {
             await console.log('rest call error: '+error);

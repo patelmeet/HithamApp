@@ -21,14 +21,14 @@ export default class FileStore {
 
     static async downloadSong(song){
         try{
-        let res = await RNFetchBlob.config({fileCache : true,timeout:2000}).fetch('GET',song[SONG_URL],{});
+        let res = await RNFetchBlob.config({fileCache : true}).fetch('GET',song[SONG_URL],{});
         await console.log('----song download successful: '+song[SONG_ID]);
         song[SONG_IS_DOWNLOADED] = true;
         song[SONG_DOWNLOAD_PATH]=res.path();
         return song;
         }catch(error){
             await console.log("downloadSong Error :"+error);
-            return song;
+            return null;
         }
     }    
 }

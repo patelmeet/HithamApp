@@ -11,9 +11,11 @@ import {
 import MusicPlayer from '../utils/MusicPlayer';
 import FileStore from '../utils/FileStore';
 import DataStore from '../utils/DataStore';
+import User from '../utils/User';
 import SongListItem from '../components/SongListItem';
 import SongGridItem from '../components/SongGridItem';
 import PlayerComponent from '../components/PlayerComponent';
+import Toast from 'react-native-simple-toast';
 
 export default class SongListScreen extends Component {
     static navigationOptions = {
@@ -25,19 +27,13 @@ export default class SongListScreen extends Component {
             songs:[],
             song:'',
             props:props,
-            profileName:DEFAULT_PROFILE
         };
         this.updateSong = this.updateSong.bind(this);
-        this.updateProfile = this.updateProfile.bind(this);
     }
 
 
     updateSong(song){
         this.setState({song:song});
-    }
-
-    updateProfile(val){
-        this.setState({profileName:val});
     }
 
     componentWillUnmount(){
@@ -70,19 +66,23 @@ export default class SongListScreen extends Component {
     );
 
     async playsong(song){
-        if(song['downloaded'] != true){
-            //Download and then play
+        if(song[SONG_IS_DOWNLOADED] != true){
+            Toast.show('Downloading song...', Toast.LONG);
             let updatedSong = await FileStore.downloadSong(song);
-            await AsyncStorage.setItem(''+song.songlist_id,JSON.stringify(updatedSong));
+            if(updatedSong == null){
+                Toast.show('Unable to download', Toast.LONG);
+                return;
+            }
+            await AsyncStorage.setItem(''+song[SONG_ID],JSON.stringify(updatedSong));
         }
         await MusicPlayer.playNew(song,this.updateSong);
         return true;
     }
 
     _onPressItem = (song) => {
-//        console.log('song pressed data: '+JSON.stringify(song));
+        console.log('song pressed data: '+JSON.stringify(song));
         if(MusicPlayer.isplaying == true){
-            if(MusicPlayer.song.playingsongID == song.songlist_id)
+            if(MusicPlayer.song[SONG_ID] == song[SONG_ID])
                 return;
             else
                 MusicPlayer.stop();
@@ -91,8 +91,7 @@ export default class SongListScreen extends Component {
     };
 
     async loadSongs(list){
-        try{
-            DataStore.setProfile(this.updateProfile);    
+        try{  
             alllist = [];
 //        await console.log('loading list: '+list);
             for(var index = 0 ; index < list.length; index++ ){
@@ -109,8 +108,7 @@ export default class SongListScreen extends Component {
     render() {
 
         let listview = null;
-        console.log('comparing: '+this.state.profileName+' and '+LIST);
-        if (this.state.profileName == LIST)
+        if (User.getProfile() == LIST)
             listview = <FlatList 
                             data={this.state.songs}
                             keyExtractor={this._keyExtractor}

@@ -85,6 +85,9 @@ export default class PlayerComponent extends Component {
                     songPercentage = seconds/MusicPlayer.getDuration();
             });
         }
+        let button_title = "Pause";
+        if(MusicPlayer.paused == true)
+            button_title = "Play";
         console.log('render '+songPercentage);
         
         return (
@@ -105,7 +108,7 @@ export default class PlayerComponent extends Component {
                             </View>
                             <View style={styles.separator}/>
                             <View style={{width:80,marginLeft:5}}>
-                                <Button title='Pause' onPress={this.onPressPlayPauseButton}/>
+                                <Button title={button_title} onPress={this.onPressPlayPauseButton}/>
                             </View>
                             <View style={styles.separator}/>
                             <View >
