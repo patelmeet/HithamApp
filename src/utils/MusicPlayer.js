@@ -41,7 +41,7 @@ export default class MusicPlayer{
     }
 
     static getRecordingID(){
-        return MusicPlayer.song[SONG_ID];
+        return MusicPlayer.song[RECORDING_ID];
     }
 
     static getDuration(){

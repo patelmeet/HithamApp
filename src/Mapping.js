@@ -1,3 +1,4 @@
+global.RECORDING_ID = 'recording_id';
 global.SONG_ID   = 'song_id';
 global.SONG_NAME ="song_name";
 global.SONG_URL  = 'song_url';
