@@ -22,9 +22,9 @@ export default class PlayListItem extends React.PureComponent {
           <View>
             <View style={styles.rowContainer}>
               <View style={styles.textContainer}>
-                <Text style={styles.id}>{item[PLAYLIST_ID]}</Text>
+                <Text style={styles.id}>{item[PLAYLIST_NAME]}</Text>
                 <Text style={styles.name}
-                  numberOfLines={1}>{item[PLAYLIST_NAME]}</Text>
+                  numberOfLines={1}>{item[PLAYLIST_SONGS].length} songs</Text>
               </View>
             </View>
             <View style={styles.separator}/>
