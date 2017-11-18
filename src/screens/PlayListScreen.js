@@ -33,7 +33,7 @@ export default class PlayListScreen extends Component {
         
     _onPressItem = (list) => {
         const { navigate } = this.props.navigation;
-        navigate('SongList',{response:list});
+        navigate('SongList',{songsList:list});
     };
     
     render() {

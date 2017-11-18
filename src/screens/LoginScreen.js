@@ -53,7 +53,7 @@ export default class LoginScreen extends Component {
                 return User.getPlaylists();
         }catch(error){
             console.log("No Internet: "+error);
-            return DataStore.getPlaylists();
+            return User.getPlaylists();
         }
     };
 
@@ -71,6 +71,7 @@ export default class LoginScreen extends Component {
             Toast.show('Could not connect to Server', Toast.LONG);
         else{
             User.setUsername(u);
+            // set p or encrypted_p ?????
             User.setPassword(p);
             Toast.show('Syncing playlists...', Toast.LONG);
         }

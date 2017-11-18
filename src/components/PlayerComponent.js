@@ -15,6 +15,7 @@ import {
 import MusicPlayer from '../utils/MusicPlayer';
 import Logger from '../utils/Logger';
 var songPercentage = 0;
+var currentTime = 0;
 
 export default class PlayerComponent extends Component {
     constructor(props){
@@ -30,24 +31,26 @@ export default class PlayerComponent extends Component {
 
     onSlidingStart(){
         console.log('onslidingstart');
-//        this.setState({ sliding: true });
+        this.setState({ sliding: true });
+//        MusicPlayer.slidingToggle();
     }
     
     onSlidingChange(value){
         console.log('onslidingchange'+value);
         let newPosition = value * MusicPlayer.getDuration();
-        this.setState({ currentTime: newPosition });
-        MusicPlayer.player.setCurrentTime( newPosition );
+        currentTime = newPosition;
     }
     
     onSlidingComplete(){
         console.log('onslidingcomplete');
-        MusicPlayer.player.getCurrentTime( (seconds) => {
-            Logger.record(MusicPlayer.song[SONG_ID],"MOVED_TO_POSITION",seconds);
-        }); 
-
+        // MusicPlayer.player.getCurrentTime( (seconds) => {
+        //     Logger.record(MusicPlayer.song[SONG_ID],"MOVED_TO_POSITION",seconds);
+        // }); 
+        MusicPlayer.player.setCurrentTime( currentTime );
+        Logger.record(MusicPlayer.song[SONG_ID],"MOVED_TO_POSITION",currentTime);
+//        MusicPlayer.slidingToggle();
 //        this.refs.audio.seek( this.state.currentTime );
-//        this.setState({ sliding: false });
+        this.setState({ sliding: false });
     }
 
     // shouldComponentUpdate(nextProps,nextState){
@@ -62,10 +65,10 @@ export default class PlayerComponent extends Component {
     componentDidMount(){
         console.log('componentdidmount');
         this.interval = setInterval( () => this.setState( { time:Date.now()}) , 1000);
-        if(this.state.currentSong[SONG_ID] != 0 && MusicPlayer.player!=null){
+        if(this.state.currentSong[SONG_ID] != 0 && MusicPlayer.player!=null && this.state.sliding == false){
             MusicPlayer.player.getCurrentTime( (seconds) => {
                 if(this.state.currentSong[SONG_ID] != 0){
-                    this.setState({ currentTime : seconds });
+                    currentTime = seconds;
                 }
             });
         }
@@ -83,13 +86,13 @@ export default class PlayerComponent extends Component {
             MusicPlayer.player.getCurrentTime( (seconds) => {
                 //console.log('render '+seconds+' '+this.props.songDuration);
                     songPercentage = seconds/MusicPlayer.getDuration();
+                    currentTime = seconds;
             });
         }
         let button_title = "Pause";
         if(MusicPlayer.paused == true)
             button_title = "Play";
-        console.log('render '+songPercentage);
-        
+                
         return (
         
                     <View style={styles.rowContainer} >
@@ -103,7 +106,8 @@ export default class PlayerComponent extends Component {
                             <View>
                                 <Text style = {styles.name} > {this.props.song[SONG_NAME]} </Text>
                                 <View>
-                                    <Text style={{color:'white'}}>{ Math.floor(MusicPlayer.getDuration()/60) }:{ Math.floor(MusicPlayer.getDuration()%60) }</Text>
+                                    <Text style={{color:'white'}}>{ Math.floor(currentTime/60) }:{ Math.floor(currentTime%60) }/
+                                        { Math.floor(MusicPlayer.getDuration()/60) }:{ Math.floor(MusicPlayer.getDuration()%60) }</Text>
                                 </View>
                             </View>
                             <View style={styles.separator}/>

@@ -41,8 +41,8 @@ export default class SongListScreen extends Component {
     }
 
     componentDidMount(){
-        const { params } = this.props.navigation.state;   
-        this.loadSongs(params.response);
+        const { params } = this.props.navigation.state;      
+        this.loadSongs(params.songsList);   // songsList is a parameter passed when navigating to this Screen
         if(MusicPlayer.isPlaying)
             this.updateSong(MusicPlayer.song);
     }
@@ -75,31 +75,29 @@ export default class SongListScreen extends Component {
             }
             await AsyncStorage.setItem(''+song[SONG_ID],JSON.stringify(updatedSong));
         }
-        await MusicPlayer.playNew(song,this.updateSong);
+        await MusicPlayer.playNew(song);
         return true;
     }
 
     _onPressItem = (song) => {
-        console.log('song pressed data: '+JSON.stringify(song));
         if(MusicPlayer.isplaying == true){
+            console.log("song already playing..." +MusicPlayer.song[SONG_ID] +"new song: "+song[SONG_ID] );
             if(MusicPlayer.song[SONG_ID] == song[SONG_ID])
                 return;
             else
                 MusicPlayer.stop();
         }
-        this.playsong(song,this.updateSong);
+        this.playsong(song);
     };
 
     async loadSongs(list){
         try{  
             alllist = [];
-//        await console.log('loading list: '+list);
             for(var index = 0 ; index < list.length; index++ ){
                 let item = await AsyncStorage.getItem(''+list[index]);
                 await alllist.push(JSON.parse(item));
             }
             await this.setState({songs: alllist });
-//          await console.log('songs in the playlist: '+JSON.stringify(alllist));
         }catch(error){
             console.log(error);
         }

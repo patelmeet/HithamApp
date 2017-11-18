@@ -16,19 +16,19 @@ export default class MusicPlayer{
         console.log('duration in seconds: ' + MusicPlayer.player.getDuration() 
           + 'number of channels: ' + MusicPlayer.player.getNumberOfChannels());
         MusicPlayer.isPlaying = true; 
-        MusicPlayer.stateHandler(MusicPlayer.song);
+        //MusicPlayer.stateHandler(MusicPlayer.song);
         Logger.record(MusicPlayer.song[SONG_ID],"PLAY",0);
         MusicPlayer.player.play( (success) => {
             if(success){
                 Logger.record(MusicPlayer.song[SONG_ID],"END",MusicPlayer.getDuration());
                 MusicPlayer.isPlaying=false;
-                MusicPlayer.stateHandler(MusicPlayer.song);
+                //MusicPlayer.stateHandler(MusicPlayer.song);
             }
         })  
     };
 
     static releaseHandler(){
-        MusicPlayer.stateHandler = null;
+        //MusicPlayer.stateHandler = null;
     }
 
     static getCurrentTime(){
@@ -86,17 +86,17 @@ export default class MusicPlayer{
         MusicPlayer.player.stop();
         MusicPlayer.player.release();
         MusicPlayer.song=DEFAULT_SONG;
-        if(MusicPlayer.stateHandler != null)
-            MusicPlayer.stateHandler(MusicPlayer.song);
-        MusicPlayer.stateHandler=null;
+//        if(MusicPlayer.stateHandler != null)
+//            MusicPlayer.stateHandler(MusicPlayer.song);
+//        MusicPlayer.stateHandler=null;
     }
 
-    static playNew(song,stateHandler){
+    static playNew(song){
         if(MusicPlayer.isPlaying){
             MusicPlayer.player.stop();
             MusicPlayer.player.release();
         }
-        MusicPlayer.stateHandler = stateHandler;
+//        MusicPlayer.stateHandler = stateHandler;
         MusicPlayer.song = song;
         MusicPlayer.paused = false;
 //        console.log('playing new song: '+JSON.stringify(song));

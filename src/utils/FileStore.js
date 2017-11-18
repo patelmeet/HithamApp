@@ -8,6 +8,9 @@ export default class FileStore {
         song[SONG_DOWNLOAD_PATH] = '';
         await RNFetchBlob.config({fileCache : true, appendExt : 'jpg',timeout:2000})
         .fetch('GET',song[SONG_ICON_URL],{})
+        .progress((received, total) => {
+            console.log('image download progress', received*100.0 / total);
+        })
         .then((res) => {
             console.log('----pic download successful');
             song[SONG_ICON_PATH]=res.path();
@@ -18,10 +21,14 @@ export default class FileStore {
             AsyncStorage.setItem(''+song[SONG_ID],JSON.stringify(song));
         });
     }
+ 
 
     static async downloadSong(song){
         try{
-        let res = await RNFetchBlob.config({fileCache : true}).fetch('GET',song[SONG_URL],{});
+        let res = await RNFetchBlob.config({fileCache : true}).fetch('GET',song[SONG_URL],{})
+        .progress((received, total) => {
+                  console.log('song download progress: '+ received +' '+total);
+            });
         await console.log('----song download successful: '+song[SONG_ID]);
         song[SONG_IS_DOWNLOADED] = true;
         song[SONG_DOWNLOAD_PATH]=res.path();
