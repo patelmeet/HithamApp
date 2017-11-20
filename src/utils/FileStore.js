@@ -25,6 +25,7 @@ export default class FileStore {
 
     static async downloadSong(song){
         try{
+        await console.log("Downloading Song:" +JSON.stringify(song));    
         let res = await RNFetchBlob.config({fileCache : true}).fetch('GET',song[SONG_URL],{})
         .progress((received, total) => {
                   console.log('song download progress: '+ received +' '+total);

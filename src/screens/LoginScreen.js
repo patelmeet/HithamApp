@@ -40,17 +40,13 @@ export default class LoginScreen extends Component {
     
     async fetchUpdatePlayList(response){
         try{
-            if(response != null){                
-                let playlists = JSON.stringify(response[RESPONSE_PLAYLISTS]);
-                console.log("storing playlists: "+playlists);
-                await AsyncStorage.setItem(RESPONSE_PLAYLISTS,playlists);    
-                await DataStore.updateSongs(response[RESPONSE_SONGS]);
-                await User.setStudentPK(response[STUDENT_PK]);
-                await User.setProfile(response[RESPONSE_PROFILE]);
-                return response[RESPONSE_PLAYLISTS];
-            }
-            else
-                return User.getPlaylists();
+            let playlists = JSON.stringify(response[RESPONSE_PLAYLISTS]);
+            console.log("storing playlists: "+playlists);
+            await AsyncStorage.setItem(RESPONSE_PLAYLISTS,playlists);    
+            await DataStore.updateSongs(response[RESPONSE_SONGS]);
+            await User.setStudentPK(response[STUDENT_PK]);
+            await User.setProfile(response[RESPONSE_PROFILE]);
+            return response[RESPONSE_PLAYLISTS];
         }catch(error){
             console.log("No Internet: "+error);
             return User.getPlaylists();
@@ -62,14 +58,17 @@ export default class LoginScreen extends Component {
         let encrypted_p = encryptme(p);    
         var body = JSON.stringify({student_id: u,student_password: encrypted_p});
         let response = await Rest.post(serviceURL,body);
-
+        var playlists = [];
         if(response != null && response[RESPONSE_STATUS]==false){
             Toast.show('Incorrect Login Credentials', Toast.LONG);
             return;
         }
-        if(response == null)
+        if(response == null){
             Toast.show('Could not connect to Server', Toast.LONG);
+            playlists = User.getPlaylists();
+        }
         else{
+            
             User.setUsername(u);
             // set p or encrypted_p ?????
             User.setPassword(p);

@@ -53,7 +53,7 @@ export default class SongListScreen extends Component {
         <SongListItem
             item={item.item}
             index={index}
-            onPressItem={this._onPressItem}
+            //onPressItem={this._onPressItem}
         />
     );
 
@@ -61,34 +61,13 @@ export default class SongListScreen extends Component {
         <SongGridItem
             item={item.item}
             index={index}
-            onPressItem={this._onPressItem}
+            //onPressItem={this._onPressItem}
         />
     );
 
-    async playsong(song){
-        if(song[SONG_IS_DOWNLOADED] != true){
-            Toast.show('Downloading song...', Toast.LONG);
-            let updatedSong = await FileStore.downloadSong(song);
-            if(updatedSong == null){
-                Toast.show('Unable to download', Toast.LONG);
-                return;
-            }
-            await AsyncStorage.setItem(''+song[SONG_ID],JSON.stringify(updatedSong));
-        }
-        await MusicPlayer.playNew(song);
-        return true;
-    }
+    
 
-    _onPressItem = (song) => {
-        if(MusicPlayer.isplaying == true){
-            console.log("song already playing..." +MusicPlayer.song[SONG_ID] +"new song: "+song[SONG_ID] );
-            if(MusicPlayer.song[SONG_ID] == song[SONG_ID])
-                return;
-            else
-                MusicPlayer.stop();
-        }
-        this.playsong(song);
-    };
+   
 
     async loadSongs(list){
         try{  

@@ -82,6 +82,7 @@ export default class MusicPlayer{
     }
 
     static stop(){
+        MusicPlayer.player.pause();
         Logger.record(MusicPlayer.song[SONG_ID],"STOP",MusicPlayer.getCurrentTime());
         MusicPlayer.player.stop();
         MusicPlayer.player.release();

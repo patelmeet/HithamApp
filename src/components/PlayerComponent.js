@@ -18,6 +18,7 @@ var songPercentage = 0;
 var currentTime = 0;
 
 export default class PlayerComponent extends Component {
+    static Comp = null;
     constructor(props){
         super(props);
         this.state ={
@@ -26,8 +27,12 @@ export default class PlayerComponent extends Component {
             currentTime : 0,
             songDuration : 0,
         };
-        
+        Comp = this;
     };
+
+    static setCompSong(newSong){
+        Comp.setSong(newSong);
+    }
 
     onSlidingStart(){
         console.log('onslidingstart');
@@ -35,6 +40,10 @@ export default class PlayerComponent extends Component {
 //        MusicPlayer.slidingToggle();
     }
     
+    setSong(newSong){
+        this.setState({currentSong:newSong});
+    }
+
     onSlidingChange(value){
         console.log('onslidingchange'+value);
         let newPosition = value * MusicPlayer.getDuration();
@@ -80,7 +89,8 @@ export default class PlayerComponent extends Component {
 
 
     render() {
-//        console.log('player render ');
+        let song = this.state.currentSong;  
+        console.log('player render '+JSON.stringify(song));
         
         if(MusicPlayer.player != null ){
             MusicPlayer.player.getCurrentTime( (seconds) => {
@@ -92,19 +102,19 @@ export default class PlayerComponent extends Component {
         let button_title = "Pause";
         if(MusicPlayer.paused == true)
             button_title = "Play";
-                
+              
         return (
         
                     <View style={styles.rowContainer} >
                         <View>
                             <Image 
                             style = { styles.thumb }
-                            source={{ uri : 'file://'+this.props.song[SONG_ICON_PATH]}} />
+                            source={{ uri : 'file://'+song[SONG_ICON_PATH]}} />
                         </View>
                         <View style={styles.separator}/>
                         <View style={{flexGrow:1}}>
                             <View>
-                                <Text style = {styles.name} > {this.props.song[SONG_NAME]} </Text>
+                                <Text style = {styles.name} > {song[SONG_NAME]} </Text>
                                 <View>
                                     <Text style={{color:'white'}}>{ Math.floor(currentTime/60) }:{ Math.floor(currentTime%60) }/
                                         { Math.floor(MusicPlayer.getDuration()/60) }:{ Math.floor(MusicPlayer.getDuration()%60) }</Text>
