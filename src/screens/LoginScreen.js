@@ -33,8 +33,6 @@ export default class LoginScreen extends Component {
     }
 
     componentDidMount(){
-        //if(User.username != null)
-        //    doLogin(User.username,User.password);
 
     }
     
