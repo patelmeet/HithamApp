@@ -19,8 +19,9 @@ export default class PlayListItem extends React.PureComponent {
         <TouchableHighlight
           onPress={this._onPress}
           underlayColor='#dddddd'>
-          <View>
+          <View backgroundColor={item[PLAYLIST_COLOR]}>
             <View style={styles.rowContainer}>
+            <Image style={styles.thumb} source = {{uri: 'file://'+item[PLAYLIST_ICON_PATH]}}/>
               <View style={styles.textContainer}>
                 <Text style={styles.id}>{item[PLAYLIST_NAME]}</Text>
                 <Text style={styles.name}

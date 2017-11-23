@@ -22,6 +22,15 @@ export default class FileStore {
         });
     }
  
+    static async updatePlaylistInfo(playlist){
+        try{
+            let res = await RNFetchBlob.config({fileCache : true}).fetch('GET',playlist[PLAYLIST_ICON_URL],{});
+            playlist[PLAYLIST_ICON_PATH] = res.path();
+            return playlist;    
+        }catch(error){
+            return playlist;
+        }
+    }
 
     static async downloadSong(song){
         try{
@@ -36,7 +45,7 @@ export default class FileStore {
         return song;
         }catch(error){
             await console.log("downloadSong Error :"+error);
-            return null;
+            return song;
         }
     }    
 }

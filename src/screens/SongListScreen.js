@@ -65,10 +65,6 @@ export default class SongListScreen extends Component {
         />
     );
 
-    
-
-   
-
     async loadSongs(list){
         try{  
             alllist = [];

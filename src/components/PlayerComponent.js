@@ -22,16 +22,18 @@ export default class PlayerComponent extends Component {
     constructor(props){
         super(props);
         this.state ={
+            downloaded:false,
             currentSong : this.props.song,
             sliding : false,
             currentTime : 0,
             songDuration : 0,
         };
         Comp = this;
+        currentTime = 0;
     };
 
-    static setCompSong(newSong){
-        Comp.setSong(newSong);
+    static setCompSong(newSong,downloaded){
+        Comp.setSong(newSong,downloaded);
     }
 
     onSlidingStart(){
@@ -40,8 +42,12 @@ export default class PlayerComponent extends Component {
 //        MusicPlayer.slidingToggle();
     }
     
-    setSong(newSong){
-        this.setState({currentSong:newSong});
+    setSong(newSong,downloaded){
+        this.setState({currentSong:newSong,downloaded:downloaded});
+    }
+
+    doNothing(){
+
     }
 
     onSlidingChange(value){
@@ -102,7 +108,30 @@ export default class PlayerComponent extends Component {
         let button_title = "Pause";
         if(MusicPlayer.paused == true)
             button_title = "Play";
-              
+        console.log("currenttime : "+currentTime);
+        const slider =  (this.state.currentSong[SONG_ID]==0||this.state.downloaded==false)?
+        <Slider
+        onSlidingStart={this.doNothing.bind(this)}
+        onSlidingComplete={this.doNothing.bind(this)}
+        onValueChange={this.doNothing.bind(this)}
+        minimumTrackTintColor='#851c44'
+        style={ styles.slider }
+        trackStyle={ styles.sliderTrack }
+        thumbStyle={ styles.sliderThumb }
+        value={ songPercentage }/>
+        :
+        (<Slider
+        onSlidingStart={ this.onSlidingStart.bind(this) }
+        onSlidingComplete={ this.onSlidingComplete.bind(this) }
+        onValueChange={ this.onSlidingChange.bind(this) }
+        minimumTrackTintColor='#851c44'
+        style={ styles.slider }
+        trackStyle={ styles.sliderTrack }
+        thumbStyle={ styles.sliderThumb }
+        value={ songPercentage }/>);
+        
+        console.log("song id "+this.state.currentSong[SONG_ID]+ " and downloaded: "+this.state.downloaded);
+
         return (
         
                     <View style={styles.rowContainer} >
@@ -126,17 +155,7 @@ export default class PlayerComponent extends Component {
                             </View>
                             <View style={styles.separator}/>
                             <View >
-                                <Slider
-                                onSlidingStart={ this.onSlidingStart.bind(this) }
-                                onSlidingComplete={ this.onSlidingComplete.bind(this) }
-                                onValueChange={ this.onSlidingChange.bind(this) }
-                                minimumTrackTintColor='#851c44'
-                                style={ styles.slider }
-                                trackStyle={ styles.sliderTrack }
-                                thumbStyle={ styles.sliderThumb }
-                                value={ songPercentage }/>
-                                
-
+                               {slider}
                             </View>
 
 

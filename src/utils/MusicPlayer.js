@@ -48,7 +48,7 @@ export default class MusicPlayer{
         if(MusicPlayer.player!=null)
             return MusicPlayer.player.getDuration();
         else
-            return 1;
+            return 0;
     }
 
     static toggle(){

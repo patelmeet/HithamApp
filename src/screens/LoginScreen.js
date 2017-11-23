@@ -16,6 +16,7 @@ import DataStore from '../utils/DataStore';
 import Rest from '../utils/Rest';
 import User from '../utils/User';
 import LoginComponent from '../components/LoginComponent';
+import { NavigationActions } from 'react-navigation';
 
 export default class LoginScreen extends Component {
     constructor(props){
@@ -28,23 +29,34 @@ export default class LoginScreen extends Component {
         this.doLogin = this.doLogin.bind(this);
     };  
 
-    componentWillMount(){
-        User.init();
-    }
+    async componentWillMount(){
+        await User.init();
+        let u = null;
+        let p = null;
+        await AsyncStorage.getItem('username',(err,item)=>{
+            if(item!=null){
+                u = item;
+            }
+        });
+        await AsyncStorage.getItem('password',(err,item)=>{
+            if(item!=null && u !=null)
+                this.doLogin(u,item);
+        });
+    }   
+    
 
     componentDidMount(){
-
+        
     }
     
     async fetchUpdatePlayList(response){
         try{
-            let playlists = JSON.stringify(response[RESPONSE_PLAYLISTS]);
-            console.log("storing playlists: "+playlists);
-            await AsyncStorage.setItem(RESPONSE_PLAYLISTS,playlists);    
             await DataStore.updateSongs(response[RESPONSE_SONGS]);
+            let playlists = DataStore.updatePlaylists(response[RESPONSE_PLAYLISTS]);
+            await User.setPlaylists(JSON.stringify(playlists));
             await User.setStudentPK(response[STUDENT_PK]);
             await User.setProfile(response[RESPONSE_PROFILE]);
-            return response[RESPONSE_PLAYLISTS];
+            return playlists;
         }catch(error){
             console.log("No Internet: "+error);
             return User.getPlaylists();
@@ -66,13 +78,26 @@ export default class LoginScreen extends Component {
             playlists = User.getPlaylists();
         }
         else{
-            if(u!=User.getUsername())
+            if(u!=User.getUsername()){
+                console.log("usernames differ "+u+" "+User.getUsername());
                 AsyncStorage.clear();
+            }
+            User.setUsername(u);    
             // set p or encrypted_p ?????
             User.setPassword(p);
             Toast.show('Syncing playlists...', Toast.LONG);
         }
         let playlists = await this.fetchUpdatePlayList(response);
+
+        // const resetAction = NavigationActions.reset({
+        //     index: 0,
+        //     actions: [
+        //       NavigationActions.navigate({ routeName: 'Profile'},)
+        //     ]
+        //   })
+
+        // this.props.navigation.dispatch(setParamsAction);
+        console.log("MOVEEEEEEEEEEEEEEEEEEEEEE");
         const { navigate } = this.props.navigation;
         await navigate('PlayList',{ playlists : playlists });
         }catch(error){

@@ -58,7 +58,11 @@ export default class User {
     }
 
     static getPlaylists(){
-        return User.playlists;
+        return JSON.parse(User.playlists);
+    }
+
+    static setPlaylists(value){
+        AsyncStorage.setItem(RESPONSE_PLAYLISTS,value);
     }
 
     static setUsername(value){

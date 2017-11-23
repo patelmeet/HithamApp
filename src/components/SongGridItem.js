@@ -51,8 +51,10 @@ export default class SongGridItem extends React.PureComponent {
         this.setState({song:updatedSong,downloadState:DOWNLOADED});
         await MusicPlayer.playNew(updatedSong);    
     }
-    else
+    else{
       await MusicPlayer.playNew(this.state.song);
+      PlayerComponent.setCompSong(this.state.song,true);
+    }
   }
 
     _onPress = () => {
@@ -65,7 +67,7 @@ export default class SongGridItem extends React.PureComponent {
         else
             MusicPlayer.stop();
     }
-    PlayerComponent.setCompSong(this.state.song);
+    PlayerComponent.setCompSong(this.state.song,false);
     this.playsong();
     }
 

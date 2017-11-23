@@ -20,6 +20,20 @@ export default class DataStore {
         return (item !== null);
     }
 
+    static async updatePlaylists(playlists){
+        newPlaylists = [];
+        try{
+            for(let i=0 ; i<playlists.length ; i++){
+                let p = await FileStore.updatePlaylistInfo(playlists[i]);
+                newPlaylists.push(p);
+            }
+            return playlists;
+        }catch(error){
+            await console.log('download Image Error: '+error);
+            return playlists;
+        }    
+    }
+
     static async updateSongs(songsList){
         try{
             for(let i=0 ; i<songsList.length ; i++){
