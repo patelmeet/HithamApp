@@ -68,8 +68,8 @@ export default class LoginScreen extends Component {
             playlists = User.getPlaylists();
         }
         else{
-            
-            User.setUsername(u);
+            if(u!=User.getUsername())
+                AsyncStorage.clear();
             // set p or encrypted_p ?????
             User.setPassword(p);
             Toast.show('Syncing playlists...', Toast.LONG);

@@ -65,6 +65,10 @@ export default class User {
         AsyncStorage.setItem('username',value);
     }
 
+    static getUsername(){
+        return User.username;
+    }
+
     static setPassword(value){
         AsyncStorage.setItem('password',value);
     }
