@@ -50,11 +50,12 @@ export default class SongListItem extends React.PureComponent {
         }
         await AsyncStorage.setItem(''+this.state.song[SONG_ID],JSON.stringify(updatedSong));
         this.setState({song:updatedSong,downloadState:DOWNLOADED});
+        await PlayerComponent.setCompSong(this.state.song,true);
         await MusicPlayer.playNew(updatedSong);    
     }
     else{
-      await MusicPlayer.playNew(this.state.song);
       PlayerComponent.setCompSong(this.state.song,true);
+      MusicPlayer.playNew(this.state.song);
     }
   }
 
@@ -75,7 +76,9 @@ export default class SongListItem extends React.PureComponent {
     render() {
       const item = this.state.song;
       const spinner = this.state.downloadState==DOWNLOADING ?
-      <ActivityIndicator size='large'/> : null;
+      <ActivityIndicator size='large'/> : (this.state.downloadState==DOWNLOADED ?
+      <View backgroundColor='#14c105' style={styles.spinnerContainer} />:
+      <View backgroundColor='#995A20' style={styles.spinnerContainer} />);
       return (
         <TouchableHighlight
           onPress={this._onPress}
@@ -86,7 +89,9 @@ export default class SongListItem extends React.PureComponent {
               <View style={styles.textContainer}>
               <Text style={styles.id}>{item[SONG_NAME]}</Text>
               </View>
+              <View style={styles.spinnerContainer}>
               {spinner}
+              </View>
             </View>
             <View style={styles.separator}/>
           </View>
@@ -120,5 +125,9 @@ export default class SongListItem extends React.PureComponent {
     rowContainer: {
       flexDirection: 'row',
       padding: 10
+    },
+    spinnerContainer:{
+      width: 50,
+      height: 50,
     },
   });

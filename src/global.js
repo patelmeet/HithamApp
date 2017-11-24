@@ -1,8 +1,8 @@
 global.childID = 1;
-global.serviceURL = "http://172.16.82.145:8080/hitham/webapi/songlist"
-//global.serviceURL = "http://ehrc-dev.iiitb.ac.in/hitham/webapi/songlist"
-global.logURL = "http://172.16.82.145:8080/hitham/webapi/studentActivity/logActivity"
-//global.logURL = "http://ehrc-dev.iiitb.ac.in/hitham/webapi/studentActivity/logActivity"
+//global.serviceURL = "http://172.16.82.145:8080/hitham/webapi/songlist"
+global.serviceURL = "http://ehrc-dev.iiitb.ac.in/hitham/webapi/songlist"
+//global.logURL = "http://172.16.82.145:8080/hitham/webapi/studentActivity/logActivity"
+global.logURL = "http://ehrc-dev.iiitb.ac.in/hitham/webapi/studentActivity/logActivity"
 global.driveFileId = "0B_-MwrFrWjn-TmpRSXpkeHJ0Szg";
 global.driveViewURL = "https://drive.google.com/file/d/";
 global.driveDownloadURL = "https://drive.google.com/uc?export=download&id=";

@@ -33,6 +33,7 @@ export default class PlayerComponent extends Component {
     };
 
     static setCompSong(newSong,downloaded){
+        console.log("setting song: "+newSong[SONG_NAME]+' stat: '+downloaded);
         Comp.setSong(newSong,downloaded);
     }
 
@@ -108,6 +109,8 @@ export default class PlayerComponent extends Component {
         let button_title = "Pause";
         if(MusicPlayer.paused == true)
             button_title = "Play";
+        if (this.state.currentSong[SONG_ID]==0||this.state.downloaded==false)
+            currentTime=0;
         console.log("currenttime : "+currentTime);
         const slider =  (this.state.currentSong[SONG_ID]==0||this.state.downloaded==false)?
         <Slider

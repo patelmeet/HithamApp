@@ -62,10 +62,12 @@ export default class User {
     }
 
     static setPlaylists(value){
+        //user.playlists = JSON.parse(value);
         AsyncStorage.setItem(RESPONSE_PLAYLISTS,value);
     }
 
     static setUsername(value){
+        User.username = value;
         AsyncStorage.setItem('username',value);
     }
 
@@ -74,6 +76,7 @@ export default class User {
     }
 
     static setPassword(value){
+        User.password = value;
         AsyncStorage.setItem('password',value);
     }
 }

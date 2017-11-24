@@ -49,11 +49,13 @@ export default class SongGridItem extends React.PureComponent {
         }
         await AsyncStorage.setItem(''+this.state.song[SONG_ID],JSON.stringify(updatedSong));
         this.setState({song:updatedSong,downloadState:DOWNLOADED});
+        await PlayerComponent.setCompSong(this.state.song,true);
         await MusicPlayer.playNew(updatedSong);    
     }
     else{
-      await MusicPlayer.playNew(this.state.song);
       PlayerComponent.setCompSong(this.state.song,true);
+      MusicPlayer.playNew(this.state.song);
+      
     }
   }
 
@@ -74,16 +76,22 @@ export default class SongGridItem extends React.PureComponent {
     render() {
       const item = this.state.song;
       const spinner = this.state.downloadState==DOWNLOADING ?
-      <ActivityIndicator size='large'/> : null;
+      <ActivityIndicator size='large'/> : (this.state.downloadState==DOWNLOADED?
+      <View backgroundColor='#14c105' style={styles.spinnerContainer}/>:
+      <View backgroundColor='#995A20' style={styles.spinnerContainer}/>);
       return (
         <TouchableHighlight
           onPress={this._onPress}
           underlayColor='#dddddd'>
           <View  backgroundColor={item[SONG_COLOR]}>
             <View style={stylesDefault.rowContainer}>
-              <Image style={stylesDefault.thumb} source = {{uri: 'file://'+item[SONG_ICON_PATH]}}/>
+              <Image style={stylesDefault.thumb} source = {{uri: 'file://'+item[SONG_ICON_PATH]}}>
+              <View style={styles.spinnerContainer}>
+              {spinner}
+              </View>
+              </Image>
             </View> 
-            {spinner}
+            
           </View>
         </TouchableHighlight>
       );
@@ -91,8 +99,11 @@ export default class SongGridItem extends React.PureComponent {
   }
   const stylesDefault = StyleSheet.create({
     thumb: {
+      flexDirection: 'row',
       width: 130,
       height: 100,
+      alignItems: 'flex-end',
+      justifyContent: 'flex-end',
     },
     rowContainer: {
       flexDirection: 'row',
@@ -100,7 +111,7 @@ export default class SongGridItem extends React.PureComponent {
       borderWidth: 4,
       borderColor: 'white',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
     },
   });
 
@@ -125,5 +136,9 @@ export default class SongGridItem extends React.PureComponent {
       borderColor: 'white',
       alignItems: 'center',
       justifyContent: 'center'
+    },
+    spinnerContainer:{
+      width: 30,
+      height: 30,
     },
   });
